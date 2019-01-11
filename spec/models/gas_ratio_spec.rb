@@ -24,7 +24,7 @@ RSpec.describe IOSTSdk::Models::GasRatio do
   describe 'when deserialization is unsuccessful' do
     it 'should raise an InvalidModelDataError' do
       expect {
-        IOSTSdk::Models::ChainInfo.new.populate(model_data: { 'name' => 'IOST' })
+        IOSTSdk::Models::GasRatio.new.populate(model_data: { 'name' => 'IOST' })
       }.to raise_error(IOSTSdk::Errors::InvalidModelDataError)
     end
   end
