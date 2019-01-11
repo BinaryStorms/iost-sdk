@@ -12,7 +12,8 @@ module IOSTSdk
       'IOSTSdk::Models::PeerInfo' => {},
       'IOSTSdk::Models::ChainInfo' => {},
       'IOSTSdk::Models::GasRatio' => {},
-      'IOSTSdk::Models::RAMInfo' => {}
+      'IOSTSdk::Models::RAMInfo' => {},
+      'IOSTSdk::Models::Action' => {}
     }.freeze
 
     def self.included base
