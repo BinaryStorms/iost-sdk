@@ -26,6 +26,13 @@ module IOSTSdk
       },
       'IOSTSdk::Models::TransactionInfo' => {
         'transaction' => 'IOSTSdk::Models::Transaction'
+      },
+      'IOSTSdk::Models::Block' => {
+        'transactions' => 'IOSTSdk::Models::Transaction',
+        'info' => 'IOSTSdk::Models::Info'
+      },
+      'IOSTSdk::Models::BlockInfo' => {
+        'block' => 'IOSTSdk::Models::Block'
       }
     }.freeze
 
