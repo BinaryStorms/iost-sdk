@@ -4,15 +4,14 @@ require 'iost_sdk/models'
 
 module IOSTSdk
   module Models
-    class NodeInfo
+    class NetworkInfo
       include Models
 
       def self.attr_names
         [
-          'build_time',
-          'git_hash',
-          'mode',
-          'network'
+          'id',
+          'peer_count',
+          'peer_info'
         ]
       end
     end

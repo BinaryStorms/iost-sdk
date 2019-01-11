@@ -4,7 +4,7 @@ require 'iost_sdk/version'
 
 Gem::Specification.new do |spec|
   spec.name          = 'iost_sdk'
-  spec.version       = IostSdk::VERSION
+  spec.version       = IOSTSdk::VERSION
   spec.authors       = ['Han Wang']
   spec.email         = ['han@binarystorms.com']
 

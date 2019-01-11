@@ -2,6 +2,6 @@
 
 require 'iost_sdk/version'
 
-module IostSdk
+module IOSTSdk
   # Your code goes here...
 end

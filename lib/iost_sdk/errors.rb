@@ -1,4 +1,4 @@
-module IostSdk
+module IOSTSdk
   module Errors
     class InvalidModelDataError < StandardError
       def initialize(class_name, expected, actual)

@@ -1,3 +1,3 @@
-RSpec.describe IostSdk do
+RSpec.describe IOSTSdk do
 
 end
