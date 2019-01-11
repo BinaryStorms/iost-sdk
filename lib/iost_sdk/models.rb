@@ -13,7 +13,20 @@ module IOSTSdk
       'IOSTSdk::Models::ChainInfo' => {},
       'IOSTSdk::Models::GasRatio' => {},
       'IOSTSdk::Models::RAMInfo' => {},
-      'IOSTSdk::Models::Action' => {}
+      'IOSTSdk::Models::Action' => {},
+      'IOSTSdk::Models::AmountLimit' => {},
+      'IOSTSdk::Models::Receipt' => {},
+      'IOSTSdk::Models::TxReceipt' => {
+        'receipts' => 'IOSTSdk::Models::Receipt'
+      },
+      'IOSTSdk::Models::Transaction' => {
+        'actions' => 'IOSTSdk::Models::Action',
+        'amount_limit' => 'IOSTSdk::Models::AmountLimit',
+        'tx_receipt' => 'IOSTSdk::Models::TxReceipt'
+      },
+      'IOSTSdk::Models::TransactionInfo' => {
+        'transaction' => 'IOSTSdk::Models::Transaction'
+      }
     }.freeze
 
     def self.included base
@@ -32,6 +45,9 @@ module IOSTSdk
       # @param model_data [Hash] the JSON string of the model data
       # @return an instance of +model_class+ if +model_data+ is valid.
       def populate(model_data:)
+        # if nil, short-curcuit
+        return nil unless model_data
+
         # the model class is expected implement "attr_names" method
         model_attr_names = self.class.attr_names || []
         unless Set.new(model_attr_names).subset?(Set.new(model_data.keys))
@@ -49,7 +65,7 @@ module IOSTSdk
 
                                if v.is_a?(Hash)
                                  clazz.new.populate(model_data: v)
-                               else # assume it's an Array
+                               elsif v.is_a?(Array) # assume it's an Array
                                  v.map { |item| clazz.new.populate(model_data: item) }
                                end
                              else
