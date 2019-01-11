@@ -10,7 +10,8 @@ module IOSTSdk
         'peer_info' => 'IOSTSdk::Models::PeerInfo'
       },
       'IOSTSdk::Models::PeerInfo' => {},
-      'IOSTSdk::Models::ChainInfo' => {}
+      'IOSTSdk::Models::ChainInfo' => {},
+      'IOSTSdk::Models::GasRatio' => {}
     }.freeze
 
     def self.included base
