@@ -9,7 +9,8 @@ module IOSTSdk
       'IOSTSdk::Models::NetworkInfo' => {
         'peer_info' => 'IOSTSdk::Models::PeerInfo'
       },
-      'IOSTSdk::Models::PeerInfo' => {}
+      'IOSTSdk::Models::PeerInfo' => {},
+      'IOSTSdk::Models::ChainInfo' => {}
     }.freeze
 
     def self.included base
