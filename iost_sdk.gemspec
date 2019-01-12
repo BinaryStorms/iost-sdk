@@ -4,7 +4,7 @@ require 'iost_sdk/version'
 
 Gem::Specification.new do |spec|
   spec.name          = 'iost_sdk'
-  spec.version       = IostSdk::VERSION
+  spec.version       = IOSTSdk::VERSION
   spec.authors       = ['Han Wang']
   spec.email         = ['han@binarystorms.com']
 
@@ -20,11 +20,13 @@ Gem::Specification.new do |spec|
   end
 
   spec.require_paths = ['lib']
+  spec.metadata['yard.run'] = 'yard'
 
   spec.add_development_dependency 'bundler', '~> 1.16'
   spec.add_development_dependency 'coveralls', '~> 0.8.22'
   spec.add_development_dependency 'rake', '~> 10.0'
   spec.add_development_dependency 'rspec', '~> 3.0'
+  spec.add_development_dependency 'yard', '~> 0.9.16'
   # dependencies
   spec.add_dependency 'httparty', '~> 0.16'
 end

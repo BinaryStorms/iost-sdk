@@ -1,5 +1,7 @@
-require "iost_sdk/version"
+# frozen_string_literal: true
 
-module IostSdk
+require 'iost_sdk/version'
+
+module IOSTSdk
   # Your code goes here...
 end
