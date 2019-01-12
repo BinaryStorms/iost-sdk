@@ -125,6 +125,25 @@ module IOSTSdk
           mode: :list,
           class: 'IOSTSdk::Models::ABI'
         }
+      },
+      'IOSTSdk::Models::Signature' => {},
+      'IOSTSdk::Models::TransactionRequest' => {
+        'actions' => {
+          mode: :list,
+          class: 'IOSTSdk::Models::Action'
+        },
+        'amount_limit' => {
+          mode: :list,
+          class: 'IOSTSdk::Models::AmountLimit'
+        },
+        'publisher_sigs' => {
+          mode: :list,
+          class: 'IOSTSdk::Models::Signature'
+        },
+        'signatures' => {
+          mode: :list,
+          class: 'IOSTSdk::Models::Signature'
+        }
       }
     }.freeze
 
