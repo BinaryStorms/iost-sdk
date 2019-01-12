@@ -7,6 +7,10 @@ module IOSTSdk
     class Transaction
       include Models
 
+      require 'iost_sdk/models/action'
+      require 'iost_sdk/models/amount_limit'
+      require 'iost_sdk/models/tx_receipt'
+
       def self.attr_names
         [
           'hash',

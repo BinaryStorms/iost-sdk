@@ -2,8 +2,6 @@
 
 require 'iost_sdk/models'
 require 'iost_sdk/models/node_info'
-require 'iost_sdk/models/network_info'
-require 'iost_sdk/models/peer_info'
 require 'iost_sdk/errors'
 
 RSpec.describe IOSTSdk::Models::NodeInfo do

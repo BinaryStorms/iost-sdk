@@ -4,16 +4,15 @@ require 'iost_sdk/models'
 
 module IOSTSdk
   module Models
-    class NetworkInfo
+    class Permission
       include Models
-
-      require 'iost_sdk/models/peer_info'
 
       def self.attr_names
         [
-          'id',
-          'peer_count',
-          'peer_info'
+          'name',
+          'groups',
+          'items',
+          'threshold'
         ]
       end
     end

@@ -7,6 +7,9 @@ module IOSTSdk
     class Block
       include Models
 
+      require 'iost_sdk/models/transaction'
+      require 'iost_sdk/models/info'
+
       def self.attr_names
         [
           'hash',
@@ -19,6 +22,7 @@ module IOSTSdk
           'time',
           'gas_usage',
           'tx_count',
+          'info',
           'transactions'
         ]
       end

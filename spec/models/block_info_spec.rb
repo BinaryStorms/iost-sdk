@@ -2,9 +2,6 @@
 
 require 'iost_sdk/models'
 require 'iost_sdk/models/block_info'
-require 'iost_sdk/models/block'
-require 'iost_sdk/models/info'
-require 'iost_sdk/models/transaction'
 require 'iost_sdk/errors'
 
 RSpec.describe IOSTSdk::Models::BlockInfo do

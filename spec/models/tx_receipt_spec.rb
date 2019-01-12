@@ -2,7 +2,6 @@
 
 require 'iost_sdk/models'
 require 'iost_sdk/models/tx_receipt'
-require 'iost_sdk/models/receipt'
 require 'iost_sdk/errors'
 
 RSpec.describe IOSTSdk::Models::TxReceipt do

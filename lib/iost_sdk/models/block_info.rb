@@ -7,6 +7,8 @@ module IOSTSdk
     class BlockInfo
       include Models
 
+      require 'iost_sdk/models/block'
+
       def self.attr_names
         [
           'status',

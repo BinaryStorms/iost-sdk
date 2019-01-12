@@ -7,6 +7,8 @@ module IOSTSdk
     class NodeInfo
       include Models
 
+      require 'iost_sdk/models/network_info'
+
       def self.attr_names
         [
           'build_time',

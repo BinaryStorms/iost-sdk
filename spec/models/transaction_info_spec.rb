@@ -2,11 +2,6 @@
 
 require 'iost_sdk/models'
 require 'iost_sdk/models/transaction_info'
-require 'iost_sdk/models/transaction'
-require 'iost_sdk/models/action'
-require 'iost_sdk/models/amount_limit'
-require 'iost_sdk/models/tx_receipt'
-require 'iost_sdk/models/receipt'
 require 'iost_sdk/errors'
 
 RSpec.describe IOSTSdk::Models::TransactionInfo do

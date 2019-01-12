@@ -7,6 +7,8 @@ module IOSTSdk
     class TxReceipt
       include Models
 
+      require 'iost_sdk/models/receipt'
+
       def self.attr_names
         [
           'tx_hash',

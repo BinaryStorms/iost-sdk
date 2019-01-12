@@ -7,6 +7,8 @@ module IOSTSdk
     class TransactionInfo
       include Models
 
+      require 'iost_sdk/models/transaction'
+
       def self.attr_names
         [
           'status',
