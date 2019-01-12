@@ -113,6 +113,18 @@ module IOSTSdk
           mode: :list,
           class: 'IOSTSdk::Models::FrozenBalance'
         }
+      },
+      'IOSTSdk::Models::ABI' => {
+        'amount_limit' => {
+          mode: :list,
+          class: 'IOSTSdk::Models::AmountLimit'
+        }
+      },
+      'IOSTSdk::Models::Contract' => {
+        'abis' => {
+          mode: :list,
+          class: 'IOSTSdk::Models::ABI'
+        }
       }
     }.freeze
 
