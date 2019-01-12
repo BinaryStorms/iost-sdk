@@ -107,6 +107,12 @@ module IOSTSdk
           mode: :list,
           class: 'IOSTSdk::Models::FrozenBalance'
         }
+      },
+      'IOSTSdk::Models::TokenBalance' => {
+        'frozen_balances' => {
+          mode: :list,
+          class: 'IOSTSdk::Models::FrozenBalance'
+        }
       }
     }.freeze
 
