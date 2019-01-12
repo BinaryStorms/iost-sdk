@@ -1,0 +1,10 @@
+language: ruby
+rvm:
+  - 2.5.1
+
+sudo: false
+git:
+  quiet: true
+
+script:
+  - bundle exec rspec
