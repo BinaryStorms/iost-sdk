@@ -1,6 +1,7 @@
-require 'bundler/setup'
-require 'iost_sdk'
+# frozen_string_literal: true
+
 require 'coveralls'
+require 'bundler/setup'
 
 Coveralls.wear!
 
