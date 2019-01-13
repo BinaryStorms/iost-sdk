@@ -10,7 +10,7 @@ module IOSTSdk
       def self.attr_names
         [
           'name',
-          'groups',
+          'group_names',
           'items',
           'threshold'
         ]

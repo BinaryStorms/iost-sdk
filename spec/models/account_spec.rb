@@ -28,7 +28,7 @@ RSpec.describe IOSTSdk::Models::Account do
         'permissions' => {
           'active' => {
             'name' => 'active',
-            'groups' => [],
+            'group_names' => [],
             'items' => [{
               'id' => 'IOST2mCzj85xkSvMf1eoGtrexQcwE6gK8z5xr6Kc48DwxXPCqQJva4',
               'is_key_pair' => true,
@@ -39,7 +39,7 @@ RSpec.describe IOSTSdk::Models::Account do
           },
           'owner' => {
             'name' => 'owner',
-            'groups' => [],
+            'group_names' => [],
             'items' => [{
               'id' => 'IOST2mCzj85xkSvMf1eoGtrexQcwE6gK8z5xr6Kc48DwxXPCqQJva4',
               'is_key_pair' => true,
@@ -83,7 +83,7 @@ RSpec.describe IOSTSdk::Models::Account do
       # active permission
       expect(account.permissions['active'].is_a?(IOSTSdk::Models::Permission)).to be_truthy
       expect(account.permissions['active'].name).to eq(account_data['permissions']['active']['name'])
-      expect(account.permissions['active'].groups).to eq(account_data['permissions']['active']['groups'])
+      expect(account.permissions['active'].group_names).to eq(account_data['permissions']['active']['group_names'])
       expect(account.permissions['active'].threshold).to eq(account_data['permissions']['active']['threshold'])
       # permission item
       expect(account.permissions['active'].items.is_a?(Array)).to be_truthy
