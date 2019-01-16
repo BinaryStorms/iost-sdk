@@ -11,6 +11,8 @@ module IOSTSdk
       # value: an array of args
       METHODS = {
         get_node_info: [],
+        get_chain_info: [],
+        get_gas_ratio: [],
         # get_ram_info: [],
         # get_tx_by_hash: [:hash_value],
         # get_tx_receipt_by_tx_hash: [:hash_value],
