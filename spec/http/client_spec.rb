@@ -24,5 +24,11 @@ RSpec.describe IOSTSdk::Http::Client do
       expect(gas_ratio).not_to be_nil
       expect(gas_ratio.is_a?(IOSTSdk::Models::GasRatio)).to be_truthy
     end
+
+    it '/getRAMInfo should succeed' do
+      ram_info = client.get_ram_info
+      expect(ram_info).not_to be_nil
+      expect(ram_info.is_a?(IOSTSdk::Models::RAMInfo)).to be_truthy
+    end
   end
 end
