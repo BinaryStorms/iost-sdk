@@ -2,6 +2,8 @@
 
 module IOSTSdk
   module Models
+    require 'iost_sdk/string'
+
     MODEL_REGISTRY = {
       'IOSTSdk::Models::NodeInfo' => {
         'network' => {
@@ -199,7 +201,7 @@ module IOSTSdk
         instruction = IOSTSdk::Models::MODEL_REGISTRY[self.class.name][data_key]
         mode = instruction[:mode]
         class_name = instruction[:class]
-        clazz = class_name.split('::').inject(Object) { |o, c| o.const_get c }
+        clazz = IOSTSdk::String.classify(class_name)
 
         case mode
         when :object
