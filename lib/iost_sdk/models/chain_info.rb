@@ -11,6 +11,7 @@ module IOSTSdk
         [
           'net_name',
           'protocol_version',
+          'chain_id',
           'head_block',
           'head_block_hash',
           'lib_block',

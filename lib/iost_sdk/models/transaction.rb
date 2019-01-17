@@ -20,6 +20,7 @@ module IOSTSdk
           'gas_limit',
           'delay',
           'actions',
+          'chain_id',
           'signers',
           'publisher',
           'referred_tx',

@@ -4,7 +4,8 @@ require 'iost_sdk/http/client'
 
 RSpec.describe IOSTSdk::Http::Client do
   describe 'all API call methods' do
-    let(:base_url) { 'http://47.244.109.92:30001' }
+    # let(:base_url) { 'http://47.244.109.92:30001' }
+    let(:base_url) { 'http://13.52.105.102:30001' }
     let(:client) { IOSTSdk::Http::Client.new(base_url: base_url) }
 
     before(:all) {
