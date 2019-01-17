@@ -17,6 +17,7 @@ module IOSTSdk
           class: 'IOSTSdk::Models::PeerInfo'
         }
       },
+      'IOSTSdk::Models::Info' => {},
       'IOSTSdk::Models::PeerInfo' => {},
       'IOSTSdk::Models::ChainInfo' => {},
       'IOSTSdk::Models::GasRatio' => {},
