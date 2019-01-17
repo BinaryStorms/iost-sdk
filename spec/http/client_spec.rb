@@ -44,6 +44,7 @@ RSpec.describe IOSTSdk::Http::Client do
       expect(block_info).not_to be_nil
       expect(block_info.is_a?(IOSTSdk::Models::BlockInfo)).to be_truthy
       @test_data[:transactions] = block_info.block.transactions
+      @test_data[:contract_name] = @test_data[:transactions].first.actions.first.contract
     end
 
     it '/getBlockByHash should succeed' do
@@ -76,6 +77,12 @@ RSpec.describe IOSTSdk::Http::Client do
       token_balance = client.get_token_balance(account_name: @test_data[:account_name], token_name: 'iost', by_longest_chain: true)
       expect(token_balance).not_to be_nil
       expect(token_balance.is_a?(IOSTSdk::Models::TokenBalance)).to be_truthy
+    end
+
+    it '/getContract should succeed' do
+      contract = client.get_contract(id: @test_data[:contract_name], by_longest_chain: true)
+      expect(contract).not_to be_nil
+      expect(contract.is_a?(IOSTSdk::Models::Contract)).to be_truthy
     end
   end
 end

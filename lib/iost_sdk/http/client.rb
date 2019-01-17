@@ -20,7 +20,7 @@ module IOSTSdk
         get_block_by_number: [:number, :complete],
         get_account: [:name, :by_longest_chain],
         get_token_balance: [:account_name, :token_name, :by_longest_chain],
-        # get_contract: [:id, :by_longest_chain],
+        get_contract: [:id, :by_longest_chain],
         # get_contract_storage: [:query]
         # TODO: send_tx
         # TODO: exec_tx
