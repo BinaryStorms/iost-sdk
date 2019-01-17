@@ -15,7 +15,7 @@ module IOSTSdk
         get_gas_ratio: [],
         get_ram_info: [],
         get_tx_by_hash: [:hash_value],
-        # get_tx_receipt_by_tx_hash: [:hash_value],
+        get_tx_receipt_by_tx_hash: [:hash_value],
         get_block_by_hash: [:hash_value, :complete],
         get_block_by_number: [:number, :complete],
         # get_account: [:name, :by_longest_chain],
