@@ -71,5 +71,11 @@ RSpec.describe IOSTSdk::Http::Client do
       expect(account).not_to be_nil
       expect(account.is_a?(IOSTSdk::Models::Account)).to be_truthy
     end
+
+    it '/getTokenBalance should succeed' do
+      token_balance = client.get_token_balance(account_name: @test_data[:account_name], token_name: 'iost', by_longest_chain: true)
+      expect(token_balance).not_to be_nil
+      expect(token_balance.is_a?(IOSTSdk::Models::TokenBalance)).to be_truthy
+    end
   end
 end
