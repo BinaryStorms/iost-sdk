@@ -18,7 +18,7 @@ module IOSTSdk
         get_tx_receipt_by_tx_hash: [:hash_value],
         get_block_by_hash: [:hash_value, :complete],
         get_block_by_number: [:number, :complete],
-        # get_account: [:name, :by_longest_chain],
+        get_account: [:name, :by_longest_chain],
         # get_token_balance: [:account_name, :token_name, :by_longest_chain],
         # get_contract: [:id, :by_longest_chain],
         # get_contract_storage: [:query]

@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'json'
 require 'iost_sdk/http/client'
 
 RSpec.describe IOSTSdk::Http::Client do
@@ -62,6 +63,13 @@ RSpec.describe IOSTSdk::Http::Client do
       tx_receipt = client.get_tx_receipt_by_tx_hash(hash_value: @test_data[:transactions].first.hash)
       expect(tx_receipt).not_to be_nil
       expect(tx_receipt.is_a?(IOSTSdk::Models::TxReceipt)).to be_truthy
+      @test_data[:account_name] = JSON.parse(tx_receipt.receipts.first.content)[1]
+    end
+
+    it '/getAccount should succeed' do
+      account = client.get_account(name: @test_data[:account_name], by_longest_chain: true)
+      expect(account).not_to be_nil
+      expect(account.is_a?(IOSTSdk::Models::Account)).to be_truthy
     end
   end
 end
