@@ -28,5 +28,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rspec', '~> 3.0'
   spec.add_development_dependency 'yard', '~> 0.9.16'
   # dependencies
+  spec.add_dependency 'base58', '~> 0.2.3'
+  spec.add_dependency 'ed25519', '~> 1.2.4'
   spec.add_dependency 'httparty', '~> 0.16'
 end
