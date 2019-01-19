@@ -58,5 +58,12 @@ RSpec.describe IOSTSdk::Crypto do
       expect(key_pair.id).to eq(key_pair.public_key)
       expect(key_pair.public_key).to eq(@test_data[:public_key])
     end
+
+    it 'should create a new KeyPair from an existing keypair string' do
+      key_pair = IOSTSdk::Crypto.from_keypair(encoded_keypair: 'r25LPh94Dw485p1oS1VMPBH6vXkgosxrEmmy3sCSmAUzrJJSMbxE8QpxPEARRJptkeLJQtAxWDDF8Uqo4NRDeqN')
+      expect(key_pair.is_a?(IOSTSdk::Crypto::KeyPair)).to be_truthy
+      expect(key_pair.id).to eq(key_pair.public_key)
+      expect(key_pair.public_key).to eq('DkYmjgWxW6e7y5pCbGNYkw5xCwRHdHdb2mMg37ZGCRSx')
+    end
   end
 end

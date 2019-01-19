@@ -51,13 +51,31 @@ module IOSTSdk
 
                                   [public_key, private_key]
                                 elsif algo == KEY_ALGOS[:Ed25519]
-                                  private_key = Ed25519::SigningKey.new(Base58.base58_to_binary(encoded_private_key))
+                                  private_key = Ed25519::SigningKey.new(
+                                    Base58.base58_to_binary(encoded_private_key, :bitcoin)
+                                  )
                                   public_key = private_key.verify_key
 
                                   [public_key, private_key]
                                 end
 
       KeyPair.new(algo: algo, public_key: public_key, private_key: private_key)
+    end
+
+    # Create an instance of KeyPair from an +Ed25519+ keypair string
+    #
+    # @param encoded_kaypair [String] a Base58 encoded Ed25519 keypair string
+    # @return an instance of KeyPair
+    def self.from_keypair(encoded_keypair:)
+      private_key = Ed25519::SigningKey.from_keypair(
+        Base58.base58_to_binary(encoded_keypair, :bitcoin)
+      )
+
+      KeyPair.new(
+        algo: IOSTSdk::Crypto::KEY_ALGOS[:Ed25519],
+        public_key: private_key.verify_key,
+        private_key: private_key
+      )
     end
 
     class KeyPair
@@ -76,27 +94,31 @@ module IOSTSdk
       def public_key
         if @algo == IOSTSdk::Crypto.key_algos[:Secp256k1]
           # @public_key is an instance of OpenSSL::PKey::EC::Point
-          hex_str = @public_key.to_bn.to_s
+          key_str = @public_key.to_bn.to_s
           # convert to base58 encoding
-          Base58.encode(hex_str.to_i(10))
+          Base58.encode(key_str.to_i(10))
         elsif @algo == IOSTSdk::Crypto.key_algos[:Ed25519]
-          Base58.binary_to_base58(@public_key.to_bytes)
+          Base58.binary_to_base58(@public_key.to_bytes, :bitcoin)
         end
       end
 
       def private_key
         if @algo == IOSTSdk::Crypto.key_algos[:Secp256k1]
           # @private_key is an instance of OpenSSL::BN
-          str = @private_key.to_s
+          key_str = @private_key.to_s
           # convert to base58 encoding
-          Base58.encode(str.to_i(10))
+          Base58.encode(key_str.to_i(10))
         elsif @algo == IOSTSdk::Crypto.key_algos[:Ed25519]
-          Base58.binary_to_base58(@private_key.to_bytes)
+          Base58.binary_to_base58(@private_key.to_bytes, :bitcoin)
         end
       end
 
       def id
         public_key
+      end
+
+      def sign(message)
+        # TODO: SHA3, but how many bits?
       end
     end
   end
