@@ -5,6 +5,7 @@ module IOSTSdk
     require 'openssl'
     require 'ed25519'
     require 'base58'
+    require 'sha3'
 
     KEY_ALGOS = {
       Secp256k1: 'secp256k1',

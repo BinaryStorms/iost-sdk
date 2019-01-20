@@ -31,4 +31,5 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'base58', '~> 0.2.3'
   spec.add_dependency 'ed25519', '~> 1.2.4'
   spec.add_dependency 'httparty', '~> 0.16'
+  spec.add_dependency 'sha3', '~> 1.0.1'
 end
