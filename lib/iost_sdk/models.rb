@@ -5,6 +5,10 @@ module IOSTSdk
     require 'iost_sdk/string'
 
     MODEL_REGISTRY = {
+      # query
+      'IOSTSdk::Models::Query::ContractStorageQuery' => {},
+      'IOSTSdk::Models::Query::ContractStorageFieldsQuery' => {},
+      # result
       'IOSTSdk::Models::NodeInfo' => {
         'network' => {
           mode: :object,

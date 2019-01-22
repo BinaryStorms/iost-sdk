@@ -87,11 +87,13 @@ RSpec.describe IOSTSdk::Http::Client do
     end
 
     it '/getContractStorage should succeed' do
-      query = IOSTSdk::Models::Query::ContractStorageQuery.new(
-        id: @test_data[:contract_name],
-        field: 'producer002',
-        key: 'producerTable',
-        by_longest_chain: true
+      query = IOSTSdk::Models::Query::ContractStorageQuery.new.populate(
+        model_data: {
+          'id' => @test_data[:contract_name],
+          'field' => 'producer002',
+          'key' => 'producerTable',
+          'by_longest_chain' => true
+        }
       )
       contract_storage = client.get_contract_storage(query: query)
       expect(contract_storage).not_to be_nil
@@ -100,10 +102,12 @@ RSpec.describe IOSTSdk::Http::Client do
     end
 
     it '/getContractStorageFields should succeed' do
-      query = IOSTSdk::Models::Query::ContractStorageFieldsQuery.new(
-        id: @test_data[:contract_name],
-        key: 'producerTable',
-        by_longest_chain: true
+      query = IOSTSdk::Models::Query::ContractStorageFieldsQuery.new.populate(
+        model_data: {
+          'id' => @test_data[:contract_name],
+          'key' => 'producerTable',
+          'by_longest_chain' => true
+        }
       )
       contract_storage_fields = client.get_contract_storage_fields(query: query)
       expect(contract_storage_fields).not_to be_nil
