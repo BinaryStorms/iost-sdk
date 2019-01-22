@@ -23,7 +23,8 @@ module IOSTSdk
         get_account: [:name, :by_longest_chain],
         get_token_balance: [:account_name, :token_name, :by_longest_chain],
         get_contract: [:id, :by_longest_chain],
-        get_contract_storage: [:query]
+        get_contract_storage: [:query],
+        get_contract_storage_fields: [:query]
         # TODO: send_tx
         # TODO: exec_tx
         # TODO: subscribe

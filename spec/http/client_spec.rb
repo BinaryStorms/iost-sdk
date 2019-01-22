@@ -3,6 +3,7 @@
 require 'json'
 require 'iost_sdk/http/client'
 require 'iost_sdk/models/query/contract_storage_query'
+require 'iost_sdk/models/query/contract_storage_fields_query'
 
 RSpec.describe IOSTSdk::Http::Client do
   describe 'all API call methods' do
@@ -96,6 +97,18 @@ RSpec.describe IOSTSdk::Http::Client do
       expect(contract_storage).not_to be_nil
       expect(contract_storage.is_a?(Hash)).to be_truthy
       expect(contract_storage.has_key?(:data)).to be_truthy
+    end
+
+    it '/getContractStorageFields should succeed' do
+      query = IOSTSdk::Models::Query::ContractStorageFieldsQuery.new(
+        id: @test_data[:contract_name],
+        key: 'producerTable',
+        by_longest_chain: true
+      )
+      contract_storage_fields = client.get_contract_storage_fields(query: query)
+      expect(contract_storage_fields).not_to be_nil
+      expect(contract_storage_fields.is_a?(Hash)).to be_truthy
+      expect(contract_storage_fields.has_key?(:fields)).to be_truthy
     end
   end
 end
