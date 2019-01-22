@@ -4,12 +4,12 @@ module IOSTSdk
   module Models
     module Util
       module Serializer
-        def self.int32_to_bytes(int)
-          [int].pack('L>').unpack('C*')
+        def self.int32_to_bytes(int32)
+          [int32].pack('L>').unpack('C*')
         end
 
-        def self.int64_to_bytes(int)
-          [int].pack('Q>').unpack('C*')
+        def self.int64_to_bytes(int64)
+          [int64].pack('Q>').unpack('C*')
         end
 
         def self.string_to_bytes(str)
@@ -18,13 +18,13 @@ module IOSTSdk
 
         def self.array_to_bytes(arr, size_prefix=true)
           data_bytes = arr.map do |elem|
-            if elem.is_a?(Integer)
+            if elem.class.name == 'Integer'
               int64_to_bytes(elem)
-            elsif elem.is_a?(String)
+            elsif elem.class.name == 'String'
               string_to_bytes(elem)
-            elsif elem.is_a?(Array)
+            elsif elem.class.name == 'Array'
               array_to_bytes(elem)
-            elsif elem.is_a?(Hash)
+            elsif elem.class.name == 'Hash'
               hash_to_bytes(elem)
             end
           end
