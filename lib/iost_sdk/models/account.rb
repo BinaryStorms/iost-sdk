@@ -13,6 +13,7 @@ module IOSTSdk
       require 'iost_sdk/models/gas_info'
       require 'iost_sdk/models/account_ram_info'
       require 'iost_sdk/models/frozen_balance'
+      require 'iost_sdk/models/vote_info'
 
       def self.attr_names
         [
@@ -23,7 +24,8 @@ module IOSTSdk
           'ram_info',
           'permissions',
           'groups',
-          'frozen_balances'
+          'frozen_balances',
+          'vote_infos'
         ]
       end
     end

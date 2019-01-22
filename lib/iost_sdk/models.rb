@@ -18,6 +18,7 @@ module IOSTSdk
         }
       },
       'IOSTSdk::Models::Info' => {},
+      'IOSTSdk::Models::VoteInfo' => {},
       'IOSTSdk::Models::PeerInfo' => {},
       'IOSTSdk::Models::ChainInfo' => {},
       'IOSTSdk::Models::GasRatio' => {},
@@ -109,6 +110,10 @@ module IOSTSdk
         'frozen_balances' => {
           mode: :list,
           class: 'IOSTSdk::Models::FrozenBalance'
+        },
+        'vote_infos' => {
+          mode: :list,
+          class: 'IOSTSdk::Models::VoteInfo'
         }
       },
       'IOSTSdk::Models::TokenBalance' => {

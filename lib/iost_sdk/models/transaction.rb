@@ -43,7 +43,6 @@ module IOSTSdk
         # 10. signatures
 
         bytes = []
-        
       end
     end
   end
