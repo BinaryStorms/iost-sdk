@@ -85,35 +85,59 @@ RSpec.describe IOSTSdk::Crypto do
   end
 
   describe 'Ed25519' do
-    before(:all) do
-      @test_data = {}
+    describe 'keys' do
+      before(:all) do
+        @test_data = {}
+      end
+
+      it 'should create a new key pair successfully' do
+        key_pair = IOSTSdk::Crypto.new_keypair(algo: 'Ed25519')
+        expect(key_pair).not_to be_nil
+        expect(key_pair.is_a?(IOSTSdk::Crypto::KeyPair)).to be_truthy
+        expect(key_pair.id).to eq(key_pair.public_key)
+        @test_data[:private_key] = key_pair.private_key
+        @test_data[:public_key] = key_pair.public_key
+      end
+
+      it 'should create a new key pair from an existing private key successfully' do
+        key_pair = IOSTSdk::Crypto.keypair_from_private_key(
+          algo: 'Ed25519',
+          encoded_private_key: @test_data[:private_key]
+        )
+        expect(key_pair).not_to be_nil
+        expect(key_pair.is_a?(IOSTSdk::Crypto::KeyPair)).to be_truthy
+        expect(key_pair.id).to eq(key_pair.public_key)
+        expect(key_pair.public_key).to eq(@test_data[:public_key])
+      end
+
+      it 'should create a new KeyPair from an existing keypair string' do
+        key_pair = IOSTSdk::Crypto.from_keypair(encoded_keypair: 'r25LPh94Dw485p1oS1VMPBH6vXkgosxrEmmy3sCSmAUzrJJSMbxE8QpxPEARRJptkeLJQtAxWDDF8Uqo4NRDeqN')
+        expect(key_pair.is_a?(IOSTSdk::Crypto::KeyPair)).to be_truthy
+        expect(key_pair.id).to eq(key_pair.public_key)
+        expect(key_pair.public_key).to eq('DkYmjgWxW6e7y5pCbGNYkw5xCwRHdHdb2mMg37ZGCRSx')
+      end
     end
 
-    it 'should create a new key pair successfully' do
-      key_pair = IOSTSdk::Crypto.new_keypair(algo: 'Ed25519')
-      expect(key_pair).not_to be_nil
-      expect(key_pair.is_a?(IOSTSdk::Crypto::KeyPair)).to be_truthy
-      expect(key_pair.id).to eq(key_pair.public_key)
-      @test_data[:private_key] = key_pair.private_key
-      @test_data[:public_key] = key_pair.public_key
-    end
+    describe 'message signing' do
+      let(:sha3_digest) { SHA3::Digest.new(:sha256) }
+      let(:keypair_base58) { '1rANSfcRzr4HkhbUFZ7L1Zp69JZZHiDDq5v7dNSbbEqeU4jxy3fszV4HGiaLQEyqVpS1dKT9g7zCVRxBVzuiUzB' }
+      let(:message) { 'hello' }
+      let(:key_pair) do
+        IOSTSdk::Crypto.from_keypair(
+          encoded_keypair: keypair_base58
+        )
+      end
 
-    it 'should create a new key pair from an existing private key successfully' do
-      key_pair = IOSTSdk::Crypto.keypair_from_private_key(
-        algo: 'Ed25519',
-        encoded_private_key: @test_data[:private_key]
-      )
-      expect(key_pair).not_to be_nil
-      expect(key_pair.is_a?(IOSTSdk::Crypto::KeyPair)).to be_truthy
-      expect(key_pair.id).to eq(key_pair.public_key)
-      expect(key_pair.public_key).to eq(@test_data[:public_key])
-    end
+      it 'should generate the correct public key' do
+        expect([Base58.base58_to_binary(key_pair.public_key, :bitcoin)].pack('m0'))
+          .to eq('VzGt610agH7JxDglOJ5e3/cEEuRkOpRimmUq8b/PLwg=')
+      end
 
-    it 'should create a new KeyPair from an existing keypair string' do
-      key_pair = IOSTSdk::Crypto.from_keypair(encoded_keypair: 'r25LPh94Dw485p1oS1VMPBH6vXkgosxrEmmy3sCSmAUzrJJSMbxE8QpxPEARRJptkeLJQtAxWDDF8Uqo4NRDeqN')
-      expect(key_pair.is_a?(IOSTSdk::Crypto::KeyPair)).to be_truthy
-      expect(key_pair.id).to eq(key_pair.public_key)
-      expect(key_pair.public_key).to eq('DkYmjgWxW6e7y5pCbGNYkw5xCwRHdHdb2mMg37ZGCRSx')
+      it 'should generate the correct signature' do
+        signature = key_pair.sign(message: message)
+        existing_signature = '60NvGvhQLUVPi86kcrrEAV94J9f5BCfOInh/FL+YuD0sK00bMDrUIBsVJqGiafBp3L8oh6Y2eZuOczrNL9dTCA=='
+        expect([signature].pack('m0')).to eq(existing_signature)
+      end
     end
   end
 end
