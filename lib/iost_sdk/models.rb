@@ -6,8 +6,22 @@ module IOSTSdk
 
     MODEL_REGISTRY = {
       # query
-      'IOSTSdk::Models::Query::ContractStorageQuery' => {},
-      'IOSTSdk::Models::Query::ContractStorageFieldsQuery' => {},
+      'IOSTSdk::Models::Query::ContractStorage' => {},
+      'IOSTSdk::Models::Query::ContractStorageFields' => {},
+      'IOSTSdk::Models::Query::Transaction' => {
+        'actions' => {
+          mode: :list,
+          class: 'IOSTSdk::Models::Action'
+        },
+        'amount_limit' => {
+          mode: :list,
+          class: 'IOSTSdk::Models::AmountLimit'
+        },
+        'signatures' => {
+          mode: :list,
+          class: 'IOSTSdk::Models::Signature'
+        }
+      },
       # result
       'IOSTSdk::Models::NodeInfo' => {
         'network' => {
@@ -138,25 +152,7 @@ module IOSTSdk
           class: 'IOSTSdk::Models::ABI'
         }
       },
-      'IOSTSdk::Models::Signature' => {},
-      'IOSTSdk::Models::TransactionRequest' => {
-        'actions' => {
-          mode: :list,
-          class: 'IOSTSdk::Models::Action'
-        },
-        'amount_limit' => {
-          mode: :list,
-          class: 'IOSTSdk::Models::AmountLimit'
-        },
-        'publisher_sigs' => {
-          mode: :list,
-          class: 'IOSTSdk::Models::Signature'
-        },
-        'signatures' => {
-          mode: :list,
-          class: 'IOSTSdk::Models::Signature'
-        }
-      }
+      'IOSTSdk::Models::Signature' => {}
     }.freeze
 
     def self.included base

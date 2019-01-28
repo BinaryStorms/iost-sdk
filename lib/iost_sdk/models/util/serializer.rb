@@ -17,6 +17,8 @@ module IOSTSdk
         end
 
         def self.array_to_bytes(arr, size_prefix=true)
+          return [] if !arr || arr.empty?
+
           data_bytes = arr.map do |elem|
             if elem.class.name == 'Integer'
               int64_to_bytes(elem)
@@ -35,6 +37,8 @@ module IOSTSdk
         end
 
         def self.hash_to_bytes(h)
+          return [] if !h || h.empty?
+
           # hash to array of key-value pairs, sorted by key
           key_value_pairs = h.sort.map { |k, v| [k.to_s, v] }.flatten
           int32_to_bytes(h.size) + array_to_bytes(key_value_pairs, false)

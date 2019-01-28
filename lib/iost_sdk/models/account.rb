@@ -19,7 +19,6 @@ module IOSTSdk
         [
           'name',
           'balance',
-          'create_time',
           'gas_info',
           'ram_info',
           'permissions',

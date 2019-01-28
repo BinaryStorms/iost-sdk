@@ -1,13 +1,12 @@
 # frozen_string_literal: true
 
 require 'iost_sdk/models'
+require 'iost_sdk/models/pledge_info'
 
 module IOSTSdk
   module Models
     class GasInfo
       include Models
-
-      require 'iost_sdk/models/pledge_info'
 
       def self.attr_names
         [

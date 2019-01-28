@@ -1,15 +1,16 @@
 module IOSTSdk
   module Http
     class GetContractStorage
-      require 'iost_sdk/models/query/contract_storage_query'
+      require 'iost_sdk/models/query/contract_storage'
 
       def invoke(base_url:, query:)
-        raise ArgumentError.new('query must be an instance of IOSTSdk::Models::Query::ContractStorageQuery') unless query.is_a?(IOSTSdk::Models::Query::ContractStorageQuery)
+        raise ArgumentError.new('query must be an instance of IOSTSdk::Models::Query::ContractStorage') unless query.is_a?(IOSTSdk::Models::Query::ContractStorage)
 
         query_data = query.instance_variables
-                          .each_with_object({}) do |var_name, memo|
+                          .reduce({}) do |memo, var_name|
                             n = var_name.to_s[1..-1].to_sym
                             memo[n] = query.send(n)
+                            memo
                           end
 
         resp = HTTParty.post(

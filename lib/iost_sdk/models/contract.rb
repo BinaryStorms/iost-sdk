@@ -1,13 +1,12 @@
 # frozen_string_literal: true
 
 require 'iost_sdk/models'
+require 'iost_sdk/models/abi'
 
 module IOSTSdk
   module Models
     class Contract
       include Models
-
-      require 'iost_sdk/models/abi'
 
       def self.attr_names
         [

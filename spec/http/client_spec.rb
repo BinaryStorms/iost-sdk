@@ -2,8 +2,8 @@
 
 require 'json'
 require 'iost_sdk/http/client'
-require 'iost_sdk/models/query/contract_storage_query'
-require 'iost_sdk/models/query/contract_storage_fields_query'
+require 'iost_sdk/models/query/contract_storage'
+require 'iost_sdk/models/query/contract_storage_fields'
 
 RSpec.describe IOSTSdk::Http::Client do
   describe 'all API call methods' do
@@ -87,7 +87,7 @@ RSpec.describe IOSTSdk::Http::Client do
     end
 
     it '/getContractStorage should succeed' do
-      query = IOSTSdk::Models::Query::ContractStorageQuery.new.populate(
+      query = IOSTSdk::Models::Query::ContractStorage.new.populate(
         model_data: {
           'id' => @test_data[:contract_name],
           'field' => 'producer002',
@@ -102,7 +102,7 @@ RSpec.describe IOSTSdk::Http::Client do
     end
 
     it '/getContractStorageFields should succeed' do
-      query = IOSTSdk::Models::Query::ContractStorageFieldsQuery.new.populate(
+      query = IOSTSdk::Models::Query::ContractStorageFields.new.populate(
         model_data: {
           'id' => @test_data[:contract_name],
           'key' => 'producerTable',

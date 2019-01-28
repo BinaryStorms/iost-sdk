@@ -2,7 +2,7 @@
 
 module IOSTSdk
   module Crypto
-    require 'openssl'
+    require 'btcruby'
     require 'ed25519'
     require 'base58'
     require 'sha3'
@@ -24,7 +24,7 @@ module IOSTSdk
       raise ArgumentError.new("Invalid keypair algo: #{algo}") unless Set.new(KEY_ALGOS.values).include?(algo)
 
       public_key, private_key = if algo == KEY_ALGOS[:Secp256k1]
-                                  p_key = OpenSSL::PKey::EC.new(algo).generate_key
+                                  p_key = BTC::Key.random
                                   [p_key.public_key, p_key.private_key]
                                 elsif algo == KEY_ALGOS[:Ed25519]
                                   private_key = Ed25519::SigningKey.generate
@@ -44,13 +44,10 @@ module IOSTSdk
       raise ArgumentError.new("Invalid algo: #{algo}") unless Set.new(KEY_ALGOS.values).include?(algo)
 
       public_key, private_key = if algo == KEY_ALGOS[:Secp256k1]
-                                  p_key = OpenSSL::PKey::EC.new(algo)
-                                  private_key = OpenSSL::BN.new(
-                                    Base58.decode(encoded_private_key)
+                                  p_key = BTC::Key.new(
+                                    private_key: Base58.base58_to_binary(encoded_private_key, :bitcoin)
                                   )
-                                  public_key = p_key.group.generator.mul(private_key)
-
-                                  [public_key, private_key]
+                                  [p_key.public_key, p_key.private_key]
                                 elsif algo == KEY_ALGOS[:Ed25519]
                                   private_key = Ed25519::SigningKey.new(
                                     Base58.base58_to_binary(encoded_private_key, :bitcoin)
@@ -80,11 +77,13 @@ module IOSTSdk
     end
 
     class KeyPair
+      attr_reader :algo
+
       # Create an instance of KeyPair
       #
       # @param algo [String] the algorithm used to generate the key pair
-      # @param public_key [String] the HEX value of the public key
-      # @param private_key [String] the HEX value of the private key
+      # @param public_key [Ed25519::VerifyKey|OpenSSL::PKey::EC::Point] an instance of the public key
+      # @param private_key [Ed25519::SigningKey|OpenSSL::BN] an instance of the private key
       # @return an instance of KeyPair
       def initialize(algo:, public_key:, private_key:)
         @algo = algo
@@ -93,33 +92,55 @@ module IOSTSdk
       end
 
       def public_key
-        if @algo == IOSTSdk::Crypto.key_algos[:Secp256k1]
-          # @public_key is an instance of OpenSSL::PKey::EC::Point
-          key_str = @public_key.to_bn.to_s
-          # convert to base58 encoding
-          Base58.encode(key_str.to_i(10))
-        elsif @algo == IOSTSdk::Crypto.key_algos[:Ed25519]
-          Base58.binary_to_base58(@public_key.to_bytes, :bitcoin)
-        end
+        Base58.binary_to_base58(public_key_bytes, :bitcoin)
+      end
+
+      def public_key_raw
+        @public_key
       end
 
       def private_key
-        if @algo == IOSTSdk::Crypto.key_algos[:Secp256k1]
-          # @private_key is an instance of OpenSSL::BN
-          key_str = @private_key.to_s
-          # convert to base58 encoding
-          Base58.encode(key_str.to_i(10))
-        elsif @algo == IOSTSdk::Crypto.key_algos[:Ed25519]
-          Base58.binary_to_base58(@private_key.to_bytes, :bitcoin)
-        end
+        private_key_bytes = if @algo == IOSTSdk::Crypto.key_algos[:Secp256k1]
+                              # @private_key is in bytes already
+                              @private_key
+                            elsif @algo == IOSTSdk::Crypto.key_algos[:Ed25519]
+                              @private_key.to_bytes
+                            end
+        Base58.binary_to_base58(private_key_bytes, :bitcoin)
+      end
+
+      def private_key_raw
+        @private_key
       end
 
       def id
         public_key
       end
 
-      def sign(message)
-        # TODO: SHA3, but how many bits?
+      def sign(message:)
+        message_hash = SHA3::Digest.new(:sha256).update(message).digest
+        if @algo == IOSTSdk::Crypto.key_algos[:Secp256k1]
+          p_key = BTC::Key.new(private_key: @private_key)
+          der_signature = p_key.ecdsa_signature(message_hash)
+          decoded_der = OpenSSL::ASN1.decode(der_signature)
+          decoded_der.value
+                     .map { |v| v.value.to_s(2) }
+                     .flatten
+                     .join
+        elsif @algo == IOSTSdk::Crypto.key_algos[:Ed25519]
+          @private_key.sign(message_hash)
+        end
+      end
+
+      private
+
+      def public_key_bytes
+        if @algo == IOSTSdk::Crypto.key_algos[:Secp256k1]
+          # @public_key is in bytes already
+          @public_key
+        elsif @algo == IOSTSdk::Crypto.key_algos[:Ed25519]
+          @public_key.to_bytes
+        end
       end
     end
   end
