@@ -8,49 +8,52 @@ RSpec.describe IOSTSdk::Models::Account do
   describe 'when deserialization is successful' do
     let(:account_data) do
       {
-        'name' => 'admin',
-        'balance' => 982678652,
-        'create_time' => '0',
-        'gas_info' => {
-          'current_total' => 53102598634,
-          'transferable_gas' => 60000,
-          'pledge_gas' => 53102538634,
-          'increase_speed' => 330011,
-          'limit' => 90003000000,
-          'pledged_info' => [{
-            'pledger' => 'admin',
-            'amount' => 3000100
-          }]
+        "name" => "producer001",
+        "balance" => 0,
+        "gas_info" => {
+          "current_total" => 30000000,
+          "transferable_gas" => 0,
+          "pledge_gas" => 30000000,
+          "increase_speed" => 115,
+          "limit" => 30000000,
+          "pledged_info" => []
         },
-        'ram_info' => {
-          'available' => '99000'
+        "ram_info" => {
+          "available" => "100000",
+          "used" => "0",
+          "total" => "100000"
         },
-        'permissions' => {
-          'active' => {
-            'name' => 'active',
-            'group_names' => [],
-            'items' => [{
-              'id' => 'IOST2mCzj85xkSvMf1eoGtrexQcwE6gK8z5xr6Kc48DwxXPCqQJva4',
-              'is_key_pair' => true,
-              'weight' => '1',
-              'permission' => ''
-            }],
-            'threshold' => '1'
+        "permissions" => {
+          "active" => {
+            "name" => "active",
+            "group_names" => [],
+            "items" => [
+              {
+                "id" => "AcUVEg2RmxtFsybwGgnFZdByoY86MU6M8fZgk8L2pc7F",
+                "is_key_pair" => true,
+                "weight" => "100",
+                "permission" => ""
+              }
+            ],
+            "threshold" => "100"
           },
-          'owner' => {
-            'name' => 'owner',
-            'group_names' => [],
-            'items' => [{
-              'id' => 'IOST2mCzj85xkSvMf1eoGtrexQcwE6gK8z5xr6Kc48DwxXPCqQJva4',
-              'is_key_pair' => true,
-              'weight' => '1',
-              'permission' => ''
-            }],
-            'threshold' => '1'
+          "owner" => {
+            "name" => "owner",
+            "group_names" => [],
+            "items" => [
+              {
+                "id" => "AcUVEg2RmxtFsybwGgnFZdByoY86MU6M8fZgk8L2pc7F",
+                "is_key_pair" => true,
+                "weight" => "100",
+                "permission" => ""
+              }
+            ],
+            "threshold" => "100"
           }
         },
-        'groups' => {},
-        'frozen_balances' => []
+        "groups" => {},
+        "frozen_balances" => [],
+        "vote_infos" => []
       }
     end
 
@@ -59,7 +62,6 @@ RSpec.describe IOSTSdk::Models::Account do
       expect(account).not_to be_nil
       expect(account.name).to eq(account_data['name'])
       expect(account.balance).to eq(account_data['balance'])
-      expect(account.create_time).to eq(account_data['create_time'])
       # GasInfo
       expect(account.gas_info.is_a?(IOSTSdk::Models::GasInfo)).to be_truthy
       expect(account.gas_info.current_total).to eq(account_data['gas_info']['current_total'])
@@ -69,15 +71,12 @@ RSpec.describe IOSTSdk::Models::Account do
       expect(account.gas_info.limit).to eq(account_data['gas_info']['limit'])
       # PledgeInfo
       expect(account.gas_info.pledged_info.is_a?(Array)).to be_truthy
-      expect(account.gas_info.pledged_info.size).to eq(1)
-      expect(account.gas_info.pledged_info.first.is_a?(IOSTSdk::Models::PledgeInfo)).to be_truthy
-      expect(account.gas_info.pledged_info.first.pledger).to eq(account_data['gas_info']['pledged_info'].first['pledger'])
-      expect(account.gas_info.pledged_info.first.amount).to eq(account_data['gas_info']['pledged_info'].first['amount'])
+      expect(account.gas_info.pledged_info.size).to eq(0)
       # AccountRAMInfo
       expect(account.ram_info.is_a?(IOSTSdk::Models::AccountRAMInfo)).to be_truthy
       expect(account.ram_info.available).to eq(account_data['ram_info']['available'])
-      expect(account.ram_info.used).to be_nil
-      expect(account.ram_info.total).to be_nil
+      expect(account.ram_info.used).to eq(account_data['ram_info']['used'])
+      expect(account.ram_info.total).to eq(account_data['ram_info']['total'])
       # Permission
       expect(account.permissions.is_a?(Hash)).to be_truthy
       # active permission
