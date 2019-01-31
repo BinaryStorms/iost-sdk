@@ -27,15 +27,15 @@ module IOSTSdk
         ]
       end
 
-      def byte_string
+      def bytes
         serializer = IOSTSdk::Models::Util::Serializer
 
-        byte_string_val = (algorithm == ALGORITHM[:SECP256K1] ? [1] : [2]).pack('C*') +
-                          serializer.int32_to_bytes(signature_raw.size).pack('C*') +
-                          signature_raw +
-                          serializer.int32_to_bytes(public_key_raw.size).pack('C*') +
-                          public_key_raw
-        serializer.int32_to_bytes(byte_string_val.size).pack('C*') + byte_string_val
+        byte_value = (algorithm == ALGORITHM[:SECP256K1] ? [1] : [2]) +
+                          serializer.int32_to_bytes(signature_raw.size) +
+                          signature_raw.unpack('C*') +
+                          serializer.int32_to_bytes(public_key_raw.size) +
+                          public_key_raw.unpack('C*')
+        serializer.int32_to_bytes(byte_value.size) + byte_value
       end
     end
   end

@@ -27,16 +27,16 @@ module IOSTSdk
         end
 
         def hash_value(include_signatures:)
-          byte_string = bytes_for_signature.pack('C*')
+          byte_string = bytes_for_signature
           if include_signatures
             serializer = IOSTSdk::Models::Util::Serializer
             byte_string = byte_string +
-              serializer.int32_to_bytes(signatures.size).pack('C*') +
-              signatures.map(&:byte_string).flatten.first
+              serializer.int32_to_bytes(signatures.size) +
+              signatures.map(&:bytes).flatten
           end
 
           SHA3::Digest.new(:sha256)
-                      .update(byte_string)
+                      .update(byte_string.pack('C*'))
                       .digest
         end
 
