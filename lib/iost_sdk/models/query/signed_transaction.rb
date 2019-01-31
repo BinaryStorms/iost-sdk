@@ -11,7 +11,8 @@ module IOSTSdk
       # This represents the signed transaction payload for https://developers.iost.io/docs/en/6-reference/API.html#sendtx
       class SignedTransaction
         def self.from_transaction(transaction:)
-          raise ArgumentError.new('tx must be an instance of IOSTSdk::Models::Query::Transaction') unless transaction.is_a?(IOSTSdk::Models::Query::Transaction)
+          raise ArgumentError.new('tx must be an instance of IOSTSdk::Models::Query::Transaction') unless
+            transaction.is_a?(IOSTSdk::Models::Query::Transaction)
 
           # assign fields and values from tx
           signed_tx = SignedTransaction.new
