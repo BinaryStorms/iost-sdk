@@ -43,17 +43,13 @@ module IOSTSdk
         def add_sig(key_pair:)
           signature = key_pair.sign(message: hash_value(include_signatures: false))
           @signatures ||= []
-          signature_obj = IOSTSdk::Models::Signature.new.populate(
+          @signatures << IOSTSdk::Models::Signature.new.populate(
             model_data: {
               'algorithm' => key_pair.algo,
               'public_key' => [key_pair.public_key_raw].pack('m0'),
               'signature' => [signature].pack('m0')
             }
           )
-          signature_obj.public_key_raw = key_pair.public_key_raw
-          signature_obj.signature_raw = signature
-
-          @signatures << signature_obj
 
           self
         end

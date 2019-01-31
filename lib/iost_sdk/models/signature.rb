@@ -8,8 +8,6 @@ module IOSTSdk
     class Signature
       include Models
 
-      attr_accessor :public_key_raw, :signature_raw
-
       ALGORITHM = {
         ED25519: 'ED25519',
         SECP256K1: 'SECP256K1'
@@ -29,6 +27,8 @@ module IOSTSdk
 
       def bytes
         serializer = IOSTSdk::Models::Util::Serializer
+        public_key_raw = public_key.unpack('m0').first
+        signature_raw = signature.unpack('m0').first
 
         byte_value = (algorithm == ALGORITHM[:SECP256K1] ? [1] : [2]) +
                           serializer.int32_to_bytes(signature_raw.size) +
