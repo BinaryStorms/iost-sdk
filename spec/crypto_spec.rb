@@ -63,7 +63,7 @@ RSpec.describe IOSTSdk::Crypto do
     describe 'message signing' do
       let(:sha3_digest) { SHA3::Digest.new(:sha256) }
       let(:private_key) { 'EhNiaU4DzUmjCrvynV3gaUeuj2VjB1v2DCmbGD5U2nSE' }
-      let(:message) { 'hello' }
+      let(:message) { SHA3::Digest.new(:sha256).update('hello').digest }
       let(:key_pair) do
         IOSTSdk::Crypto.keypair_from_private_key(
           algo: IOSTSdk::Crypto.key_algos[:Secp256k1],
@@ -121,7 +121,7 @@ RSpec.describe IOSTSdk::Crypto do
     describe 'message signing' do
       let(:sha3_digest) { SHA3::Digest.new(:sha256) }
       let(:keypair_base58) { '1rANSfcRzr4HkhbUFZ7L1Zp69JZZHiDDq5v7dNSbbEqeU4jxy3fszV4HGiaLQEyqVpS1dKT9g7zCVRxBVzuiUzB' }
-      let(:message) { 'hello' }
+      let(:message) { SHA3::Digest.new(:sha256).update('hello').digest }
       let(:key_pair) do
         IOSTSdk::Crypto.from_keypair(
           encoded_keypair: keypair_base58

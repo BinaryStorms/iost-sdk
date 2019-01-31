@@ -13,6 +13,10 @@ module IOSTSdk
           'value'
         ]
       end
+
+      def raw_data
+        [token, value.to_s]
+      end
     end
   end
 end

@@ -23,6 +23,10 @@ module IOSTSdk
           'signature'
         ]
       end
+
+      def raw_data
+        [algorithm, public_key, signature]
+      end
     end
   end
 end

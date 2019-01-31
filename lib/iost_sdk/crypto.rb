@@ -92,25 +92,29 @@ module IOSTSdk
       end
 
       def public_key
-        Base58.binary_to_base58(public_key_bytes, :bitcoin)
+        Base58.binary_to_base58(public_key_raw, :bitcoin)
       end
 
       def public_key_raw
-        @public_key
+        if @algo == IOSTSdk::Crypto.key_algos[:Secp256k1]
+          # @public_key is in bytes already
+          @public_key
+        elsif @algo == IOSTSdk::Crypto.key_algos[:Ed25519]
+          @public_key.to_bytes
+        end
       end
 
       def private_key
-        private_key_bytes = if @algo == IOSTSdk::Crypto.key_algos[:Secp256k1]
-                              # @private_key is in bytes already
-                              @private_key
-                            elsif @algo == IOSTSdk::Crypto.key_algos[:Ed25519]
-                              @private_key.to_bytes
-                            end
-        Base58.binary_to_base58(private_key_bytes, :bitcoin)
+        Base58.binary_to_base58(private_key_raw, :bitcoin)
       end
 
       def private_key_raw
-        @private_key
+        if @algo == IOSTSdk::Crypto.key_algos[:Secp256k1]
+          # @private_key is in bytes already
+          @private_key
+        elsif @algo == IOSTSdk::Crypto.key_algos[:Ed25519]
+          @private_key.to_bytes
+        end
       end
 
       def id
@@ -118,28 +122,16 @@ module IOSTSdk
       end
 
       def sign(message:)
-        message_hash = SHA3::Digest.new(:sha256).update(message).digest
         if @algo == IOSTSdk::Crypto.key_algos[:Secp256k1]
           p_key = BTC::Key.new(private_key: @private_key)
-          der_signature = p_key.ecdsa_signature(message_hash)
+          der_signature = p_key.ecdsa_signature(message)
           decoded_der = OpenSSL::ASN1.decode(der_signature)
           decoded_der.value
                      .map { |v| v.value.to_s(2) }
                      .flatten
                      .join
         elsif @algo == IOSTSdk::Crypto.key_algos[:Ed25519]
-          @private_key.sign(message_hash)
-        end
-      end
-
-      private
-
-      def public_key_bytes
-        if @algo == IOSTSdk::Crypto.key_algos[:Secp256k1]
-          # @public_key is in bytes already
-          @public_key
-        elsif @algo == IOSTSdk::Crypto.key_algos[:Ed25519]
-          @public_key.to_bytes
+          @private_key.sign(message)
         end
       end
     end
