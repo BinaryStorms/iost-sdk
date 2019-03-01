@@ -2,14 +2,17 @@
 
 require 'json'
 require 'iost_sdk/http/client'
+require 'iost_sdk'
+require 'iost_sdk/crypto'
 require 'iost_sdk/models/query/contract_storage'
 require 'iost_sdk/models/query/contract_storage_fields'
+require 'iost_sdk/models/query/signed_transaction'
 
 RSpec.describe IOSTSdk::Http::Client do
-  describe 'all API call methods' do
-    let(:base_url) { 'http://13.52.105.102:30001' }
-    let(:client) { IOSTSdk::Http::Client.new(base_url: base_url) }
+  let(:base_url) { 'http://13.52.105.102:30001' }
+  let(:client) { IOSTSdk::Http::Client.new(base_url: base_url) }
 
+  describe 'all API call methods' do
     before(:all) {
       @test_data = {}
     }
@@ -113,6 +116,30 @@ RSpec.describe IOSTSdk::Http::Client do
       expect(contract_storage_fields).not_to be_nil
       expect(contract_storage_fields.is_a?(Hash)).to be_truthy
       expect(contract_storage_fields.has_key?(:fields)).to be_truthy
+    end
+  end
+
+  describe 'transactions' do
+    let(:key_pair) do
+      IOSTSdk::Crypto.from_keypair(
+        encoded_keypair: '2yquS3ySrGWPEKywCPzX4RTJugqRh7kJSo5aehsLYPEWkUxBWA39oMrZ7ZxuM4fgyXYs2cPwh5n8aNNpH5x2VyK1'
+      )
+    end
+
+    it 'should send a "new account" transaction correctly' do
+      txn = IOSTSdk::Main.new(endpoint: 'http://13.52.105.102:30001')
+                         .new_account(
+                           name: 'ironman',
+                           creator: 'admin',
+                           owner_key: key_pair,
+                           active_key: key_pair,
+                           initial_ram: 1_024,
+                           initial_gas_pledge: 10
+                         )
+      txn.chain_id = 1024
+      # TODO: need an autorized user with enough gas ...
+      resp = client.send_tx(transaction: txn, account_name: 'admin', key_pair: key_pair)
+      puts "------ new account txn response: #{resp}"
     end
   end
 end

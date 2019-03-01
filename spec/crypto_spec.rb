@@ -91,7 +91,7 @@ RSpec.describe IOSTSdk::Crypto do
       end
 
       it 'should create a new key pair successfully' do
-        key_pair = IOSTSdk::Crypto.new_keypair(algo: 'Ed25519')
+        key_pair = IOSTSdk::Crypto.new_keypair(algo: 'ED25519')
         expect(key_pair).not_to be_nil
         expect(key_pair.is_a?(IOSTSdk::Crypto::KeyPair)).to be_truthy
         expect(key_pair.id).to eq(key_pair.public_key)
@@ -101,7 +101,7 @@ RSpec.describe IOSTSdk::Crypto do
 
       it 'should create a new key pair from an existing private key successfully' do
         key_pair = IOSTSdk::Crypto.keypair_from_private_key(
-          algo: 'Ed25519',
+          algo: 'ED25519',
           encoded_private_key: @test_data[:private_key]
         )
         expect(key_pair).not_to be_nil

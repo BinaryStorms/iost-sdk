@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
+require 'json'
+require 'iost_sdk/string'
+
 module IOSTSdk
   module Models
-    require 'iost_sdk/string'
-
     MODEL_REGISTRY = {
       # query
       'IOSTSdk::Models::Query::ContractStorage' => {},
@@ -18,6 +19,24 @@ module IOSTSdk
           class: 'IOSTSdk::Models::AmountLimit'
         },
         'signatures' => {
+          mode: :list,
+          class: 'IOSTSdk::Models::Signature'
+        }
+      },
+      'IOSTSdk::Models::Query::SignedTransaction' => {
+        'actions' => {
+          mode: :list,
+          class: 'IOSTSdk::Models::Action'
+        },
+        'amount_limit' => {
+          mode: :list,
+          class: 'IOSTSdk::Models::AmountLimit'
+        },
+        'signatures' => {
+          mode: :list,
+          class: 'IOSTSdk::Models::Signature'
+        },
+        'publisher_sigs' => {
           mode: :list,
           class: 'IOSTSdk::Models::Signature'
         }
@@ -218,15 +237,40 @@ module IOSTSdk
           if data_value.empty?
             {}
           else
-            data_value.inject({}) do |memo, (v_key, v_value)|
+            data_value.each_with_object({}) do |(v_key, v_value), memo|
               memo[v_key] = clazz.new.populate(model_data: v_value)
-              memo
             end
           end
         end
       else
         data_value
       end
+    end
+
+    def raw_data
+      raw_data = instance_variables.each_with_object({}) do |var_name, memo|
+        n = var_name.to_s[1..-1].to_sym
+        v = send(n)
+
+        final_v = if IOSTSdk::Models::MODEL_REGISTRY[self.class.name].has_key?(n.to_s)
+                    mode = IOSTSdk::Models::MODEL_REGISTRY[self.class.name][n.to_s][:mode]
+                    case mode
+                    when :object
+                      v.raw_data
+                    when :list
+                      v.map(&:raw_data)
+                    when :hash
+                      v.each_with_object({}) do |(v_key, v_value), memo|
+                        memo[v_key] = v_value.raw_data
+                      end
+                    end
+                  else
+                    v
+                  end
+        memo[n] = final_v
+      end
+
+      raw_data
     end
   end
 end

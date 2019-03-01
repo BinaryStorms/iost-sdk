@@ -1,10 +1,12 @@
 # frozen_string_literal: true
 
+require 'json'
 require 'iost_sdk'
+require 'iost_sdk/crypto'
 
 RSpec.describe IOSTSdk do
   it 'should create an instance with default values' do
-    iost = IOSTSdk::Main.new
+    iost = IOSTSdk::Main.new(endpoint: 'http://13.52.105.102:30001')
     expect(iost.gas_limit).to eq(1_000_000)
     expect(iost.gas_ratio).to eq(1)
     expect(iost.delay).to eq(0)
@@ -12,14 +14,15 @@ RSpec.describe IOSTSdk do
   end
 
   it 'should create a Transaction with an action' do
-    txn = IOSTSdk::Main.new.call_abi(
-      contract_id: 'contract-123',
-      abi_name: 'grow',
-      abi_args: {
-        rate: 0.8,
-        cap: 999
-      }
-    )
+    txn = IOSTSdk::Main.new(endpoint: 'http://13.52.105.102:30001')
+                       .call_abi(
+                         contract_id: 'contract-123',
+                         abi_name: 'grow',
+                         abi_args: {
+                           rate: 0.8,
+                           cap: 999
+                         }
+                       )
 
     expect(txn.is_a?(IOSTSdk::Models::Query::Transaction)).to be_truthy
     expect(txn.actions.size).to eq(1)
@@ -37,13 +40,14 @@ RSpec.describe IOSTSdk do
   end
 
   it 'should create a Transaction with a transfer action' do
-    txn = IOSTSdk::Main.new.transfer(
-      token: 'iron.man',
-      from: 'Tony',
-      to: 'Stark',
-      amount: 999,
-      memo: 'Hey, spend it well :-)'
-    )
+    txn = IOSTSdk::Main.new(endpoint: 'http://13.52.105.102:30001')
+                       .transfer(
+                         token: 'iron.man',
+                         from: 'Tony',
+                         to: 'Stark',
+                         amount: 999,
+                         memo: 'Hey, spend it well :-)'
+                       )
     expect(txn.is_a?(IOSTSdk::Models::Query::Transaction)).to be_truthy
     expect(txn.actions.size).to eq(1)
     expect(txn.actions.first.contract).to eq('token.iost')
@@ -56,5 +60,31 @@ RSpec.describe IOSTSdk do
     expect(txn.amount_limit.first.value).to eq('unlimited')
     expect(txn.amount_limit[1].token).to eq('iost')
     expect(txn.amount_limit[1].value).to eq('999')
+  end
+
+  it 'should create a Transaction with a new_account action' do
+    key_pair = IOSTSdk::Crypto.keypair_from_private_key(
+      algo: 'ED25519',
+      encoded_private_key: '84bcoQzCg2HgyAosknAN1XW97Sp2R4UJLZxqUUmnh5p1'
+    )
+
+    new_account_args = {
+      name: 'IronMan',
+      creator: 'admin',
+      owner_key: key_pair,
+      active_key: key_pair,
+      initial_ram: 5_000,
+      initial_gas_pledge: 10_000
+    }
+
+    txn = IOSTSdk::Main.new(endpoint: 'http://13.52.105.102:30001')
+                       .new_account(new_account_args)
+    expect(txn.is_a?(IOSTSdk::Models::Query::Transaction)).to be_truthy
+    expect(txn.actions.size).to eq(3)
+
+    expect(txn.expiration).to eq(txn.time + 90_000_000_000 * 1_000_000)
+    expect(txn.amount_limit.size).to eq(1)
+    expect(txn.amount_limit.first.token).to eq('*')
+    expect(txn.amount_limit.first.value).to eq('unlimited')
   end
 end

@@ -7,16 +7,21 @@ require 'iost_sdk/models/query/signed_transaction'
 
 module IOSTSdk
   class Main
-    attr_accessor :gas_limit, :gas_ratio, :delay, :expiration
+    attr_accessor :gas_limit, :gas_ratio, :delay, :expiration, :approval_limit_amount
 
     DEFAULTS = {
       gas_limit: 1_000_000,
       gas_ratio: 1,
       delay: 0,
-      expiration: 90_000_000_000
+      expiration: 90_000_000_000,
+      approval_limit_amount: :unlimited
     }.freeze
 
-    def initialize
+    #
+    # @param endpoint [String] a URL of the JSON RPC endpoint of IOST
+    def initialize(endpoint:)
+      @endpoint = endpoint
+
       DEFAULTS.each do |k, v|
         instance_variable_set("@#{k}".to_sym, v)
       end
@@ -29,21 +34,7 @@ module IOSTSdk
     # @param abi_args [any] args to the ABI
     # @return a new instance of Transaction
     def call_abi(contract_id:, abi_name:, abi_args:)
-      time_now = Time.now.utc.to_i * 1_000_000
-      transaction = IOSTSdk::Models::Query::Transaction.new.populate(
-        model_data: {
-          'time' => time_now,
-          'expiration' => time_now + delay * 1_000_000,
-          'gas_ratio' => gas_ratio,
-          'gas_limit' => gas_limit,
-          'delay' => delay,
-          'chain_id' => nil,
-          'signers' => [],
-          'actions' => [],
-          'amount_limit' => [],
-          'signatures' => []
-        }
-      )
+      transaction = init_transaction
       transaction.add_action(contract_id: contract_id, action_name: abi_name, action_data: abi_args)
       transaction.add_approve(token: '*', amount: :unlimited)
       transaction
@@ -64,6 +55,55 @@ module IOSTSdk
         abi_args: [token, from, to, amount, memo]
       )
       transaction.add_approve(token: :iost, amount: amount)
+      transaction
+    end
+
+    # Create an instance IOSTSdk::Models::Transaction to create a new account
+    #
+    # @param name [String] the name of the account to be created
+    # @param creator [String] the name of the account that's creating a new account
+    # @param owner_key [IOSTSdk::Crypto::KeyPair] the owner key of the new account
+    # @param active_key [IOSTSdk::Crypto::KeyPair] the active key of the new account
+    # @param initial_ram [Integer] the initial RAM of the new account
+    # @param initial_gas_pledge [Integer] the initial gas pledge of the new account
+    def new_account(name:, creator:, owner_key:, active_key:, initial_ram:, initial_gas_pledge:)
+      transaction = init_transaction
+
+      [
+        {
+          contract_id: 'auth.iost', action_name: :signUp, action_data: [name, owner_key.id, active_key.id]
+        },
+        {
+          contract_id: 'ram.iost', action_name: :buy, action_data: [creator, name, initial_ram]
+        },
+        {
+          contract_id: 'ram.iost', action_name: :buy, action_data: [creator, name, initial_gas_pledge.to_s]
+        }
+      ].each { |args| transaction.add_action(args) }
+
+      transaction.set_time_params(expiration: @expiration, delay: delay)
+      transaction.add_approve(token: '*', amount: @approval_limit_amount)
+      transaction
+    end
+
+    private
+
+    def init_transaction
+      time_now = Time.now.utc.to_i * 1_000_000
+      transaction = IOSTSdk::Models::Query::Transaction.new.populate(
+        model_data: {
+          'time' => time_now,
+          'expiration' => time_now + delay * 1_000_000,
+          'gas_ratio' => gas_ratio,
+          'gas_limit' => gas_limit,
+          'delay' => delay,
+          'chain_id' => 0,
+          'signers' => [],
+          'actions' => [],
+          'amount_limit' => [],
+          'signatures' => []
+        }
+      )
       transaction
     end
   end

@@ -14,7 +14,7 @@ module IOSTSdk
         ]
       end
 
-      def raw_data
+      def raw_data_bytes
         [token, value.to_s]
       end
     end

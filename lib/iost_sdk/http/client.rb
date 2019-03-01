@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
+require 'json'
+require 'httparty'
+require 'iost_sdk/models/query/signed_transaction'
+require 'iost_sdk/http/http_request_error'
+require 'iost_sdk/string'
+
 module IOSTSdk
   module Http
-    require 'json'
-    require 'httparty'
-    require 'iost_sdk/http/http_request_error'
-
     class Client
-      require 'iost_sdk/string'
-
       # key: method name
       # value: an array of args
       METHODS = {
@@ -24,8 +24,8 @@ module IOSTSdk
         get_token_balance: [:account_name, :token_name, :by_longest_chain],
         get_contract: [:id, :by_longest_chain],
         get_contract_storage: [:query],
-        get_contract_storage_fields: [:query]
-        # TODO: send_tx
+        get_contract_storage_fields: [:query],
+        send_tx: [:transaction, :account_name, :key_pair]
         # TODO: exec_tx
         # TODO: subscribe
       }
@@ -39,7 +39,9 @@ module IOSTSdk
           # define the method
           self.class.send(:define_method, method_name) do |**args|
             # extract match args for the call
-            raise ArgumentError.new('Invalid method arguments.') unless Set.new(method_args).subset?(Set.new(args.keys))
+            raise ArgumentError.new('Invalid method arguments.') unless
+              Set.new(method_args).subset?(Set.new(args.keys))
+
             valid_args = method_args.reduce({}) do |memo, k|
               memo[k] = args[k]
               memo

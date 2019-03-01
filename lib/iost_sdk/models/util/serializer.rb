@@ -28,8 +28,8 @@ module IOSTSdk
               array_to_bytes(elem)
             elsif elem.class.name == 'Hash'
               hash_to_bytes(elem)
-            elsif elem.respond_to?(:raw_data)
-              raw_data_bytes = array_to_bytes(elem.raw_data, false)
+            elsif elem.respond_to?(:raw_data_bytes)
+              raw_data_bytes = array_to_bytes(elem.raw_data_bytes, false)
               (int32_to_bytes(raw_data_bytes.size) + raw_data_bytes).flatten
             end
           end

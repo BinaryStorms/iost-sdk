@@ -16,7 +16,8 @@ module IOSTSdk
           'head_block_hash',
           'lib_block',
           'lib_block_hash',
-          'witness_list'
+          'witness_list',
+          'lib_witness_list'
         ]
       end
     end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module IOSTSdk
   module Http
     class HttpRequestError < StandardError

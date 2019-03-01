@@ -12,7 +12,7 @@ module IOSTSdk
       class Transaction
         include Models
 
-        attr_accessor :actions, :chain_id
+        attr_accessor :chain_id
 
         def self.attr_names
           [
@@ -27,6 +27,18 @@ module IOSTSdk
             'amount_limit',
             'signatures'
           ]
+        end
+
+        # set the +time+ implicitly, and set +expiration+ and +delay+ explicitly
+        #
+        # @param expiration [Integer] number of seconds, since creation, the transaction will expire in
+        # @param delay [Integer] the delay
+        def set_time_params(expiration:, delay:)
+          time_now = Time.now.utc.to_i * 1_000_000
+
+          @time = time_now
+          @expiration = @time + expiration * 1_000_000
+          @delay = delay
         end
 
         # Add an action to the transaction

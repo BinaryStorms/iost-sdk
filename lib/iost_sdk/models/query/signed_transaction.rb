@@ -2,6 +2,7 @@
 
 require 'sha3'
 require 'base58'
+require 'iost_sdk/models'
 require 'iost_sdk/models/query/transaction'
 require 'iost_sdk/models/util/serializer'
 
@@ -10,6 +11,8 @@ module IOSTSdk
     module Query
       # This represents the signed transaction payload for https://developers.iost.io/docs/en/6-reference/API.html#sendtx
       class SignedTransaction
+        include Models
+
         def self.from_transaction(transaction:)
           raise ArgumentError.new('tx must be an instance of IOSTSdk::Models::Query::Transaction') unless
             transaction.is_a?(IOSTSdk::Models::Query::Transaction)
@@ -25,6 +28,30 @@ module IOSTSdk
           end
 
           signed_tx
+        end
+
+        def sign(account_name:, key_pair:)
+          add_sig(key_pair: key_pair)
+          add_publisher_sig(account_name: account_name, key_pair: key_pair)
+        end
+
+        private
+
+        def bytes_for_signature
+          serializer = IOSTSdk::Models::Util::Serializer
+          tx_bytes = serializer.int64_to_bytes(time) +
+            serializer.int64_to_bytes(expiration) +
+            serializer.int64_to_bytes(gas_ratio * 100) +
+            serializer.int64_to_bytes(gas_limit * 100) +
+            serializer.int32_to_bytes(chain_id) +
+            serializer.int64_to_bytes(delay) +
+            # adding "reserved" as a fixed value
+            serializer.int32_to_bytes(0) +
+            serializer.array_to_bytes(signers) +
+            serializer.array_to_bytes(actions) +
+            serializer.array_to_bytes(amount_limit)
+
+          tx_bytes
         end
 
         def hash_value(include_signatures:)
@@ -75,25 +102,6 @@ module IOSTSdk
           )
           self.class.send(:define_method, :publisher_sigs) { instance_variable_get('@publisher_sigs') }
           self
-        end
-
-        private
-
-        def bytes_for_signature
-          serializer = IOSTSdk::Models::Util::Serializer
-          tx_bytes = serializer.int64_to_bytes(time) +
-            serializer.int64_to_bytes(expiration) +
-            serializer.int64_to_bytes(gas_ratio * 100) +
-            serializer.int64_to_bytes(gas_limit * 100) +
-            serializer.int32_to_bytes(chain_id) +
-            serializer.int64_to_bytes(delay) +
-            # adding "reserved" as a fixed value
-            serializer.int32_to_bytes(0) +
-            serializer.array_to_bytes(signers) +
-            serializer.array_to_bytes(actions) +
-            serializer.array_to_bytes(amount_limit)
-
-          tx_bytes
         end
       end
     end

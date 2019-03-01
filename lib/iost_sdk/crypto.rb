@@ -9,7 +9,7 @@ module IOSTSdk
 
     KEY_ALGOS = {
       Secp256k1: 'secp256k1',
-      Ed25519: 'Ed25519'
+      Ed25519: 'ED25519'
     }.freeze
 
     def self.key_algos
