@@ -135,6 +135,7 @@ RSpec.describe IOSTSdk::Http::Client do
                            initial_ram: 10,
                            initial_gas_pledge: 0
                          )
+                         .transaction
       txn.chain_id = 1023
       resp = client.send_tx(transaction: txn, account_name: 'binary_test', key_pair: key_pair)
       expect(resp).to_not be_nil
@@ -148,6 +149,7 @@ RSpec.describe IOSTSdk::Http::Client do
                            abi_name: 'transfer',
                            abi_args: ['iost', 'binary_test', 'binary_test', '10.000', '']
                          )
+                         .transaction
       txn.chain_id = 1023
       resp = client.send_tx(transaction: txn, account_name: 'binary_test', key_pair: key_pair)
       expect(resp).to_not be_nil
@@ -163,6 +165,7 @@ RSpec.describe IOSTSdk::Http::Client do
                            amount: '10.000',
                            memo: 'this is a test'
                          )
+                         .transaction
       txn.chain_id = 1023
       resp = client.send_tx(transaction: txn, account_name: 'binary_test', key_pair: key_pair)
       expect(resp).to_not be_nil
