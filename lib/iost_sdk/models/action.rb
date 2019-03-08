@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'json'
 require 'iost_sdk/models'
 
 module IOSTSdk
@@ -13,6 +14,10 @@ module IOSTSdk
           'action_name',
           'data'
         ]
+      end
+
+      def raw_data_bytes
+        [contract, action_name, data.to_s]
       end
     end
   end

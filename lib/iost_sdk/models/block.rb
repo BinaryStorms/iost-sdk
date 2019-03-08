@@ -1,14 +1,13 @@
 # frozen_string_literal: true
 
 require 'iost_sdk/models'
+require 'iost_sdk/models/transaction'
+require 'iost_sdk/models/info'
 
 module IOSTSdk
   module Models
     class Block
       include Models
-
-      require 'iost_sdk/models/transaction'
-      require 'iost_sdk/models/info'
 
       def self.attr_names
         [

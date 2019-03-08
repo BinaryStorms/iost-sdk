@@ -1,15 +1,14 @@
 # frozen_string_literal: true
 
 require 'iost_sdk/models'
+require 'iost_sdk/models/action'
+require 'iost_sdk/models/amount_limit'
+require 'iost_sdk/models/tx_receipt'
 
 module IOSTSdk
   module Models
     class Transaction
       include Models
-
-      require 'iost_sdk/models/action'
-      require 'iost_sdk/models/amount_limit'
-      require 'iost_sdk/models/tx_receipt'
 
       def self.attr_names
         [
@@ -20,6 +19,7 @@ module IOSTSdk
           'gas_limit',
           'delay',
           'actions',
+          'chain_id',
           'signers',
           'publisher',
           'referred_tx',

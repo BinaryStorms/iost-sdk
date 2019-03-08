@@ -1,13 +1,12 @@
 # frozen_string_literal: true
 
 require 'iost_sdk/models'
+require 'iost_sdk/models/receipt'
 
 module IOSTSdk
   module Models
     class TxReceipt
       include Models
-
-      require 'iost_sdk/models/receipt'
 
       def self.attr_names
         [

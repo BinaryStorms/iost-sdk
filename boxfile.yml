@@ -7,3 +7,10 @@ run.config:
   build_triggers:
     - Gemfile
     - Gemfile.lock
+  extra_packages:
+    - autoconf
+    - autogen
+    - automake
+    - libtool-base
+  extra_steps:
+    - ./scripts/make_secp256k1.sh

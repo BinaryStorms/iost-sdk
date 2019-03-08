@@ -1,13 +1,12 @@
 # frozen_string_literal: true
 
 require 'iost_sdk/models'
+require 'iost_sdk/models/permission_item'
 
 module IOSTSdk
   module Models
     class PermissionGroup
       include Models
-
-      require 'iost_sdk/models/permission_item'
 
       def self.attr_names
         [

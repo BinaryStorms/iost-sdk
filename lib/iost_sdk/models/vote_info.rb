@@ -1,18 +1,17 @@
 # frozen_string_literal: true
 
 require 'iost_sdk/models'
-require 'iost_sdk/models/amount_limit'
 
 module IOSTSdk
   module Models
-    class ABI
+    class VoteInfo
       include Models
 
       def self.attr_names
         [
-          'name',
-          'args',
-          'amount_limit'
+          'option',
+          'votes',
+          'cleared_votes'
         ]
       end
     end
