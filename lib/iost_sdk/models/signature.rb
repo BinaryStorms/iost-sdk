@@ -35,7 +35,7 @@ module IOSTSdk
                           signature_raw.unpack('C*') +
                           serializer.int32_to_bytes(public_key_raw.size) +
                           public_key_raw.unpack('C*')
-        serializer.int32_to_bytes(byte_value.size) + byte_value
+        byte_value
       end
     end
   end

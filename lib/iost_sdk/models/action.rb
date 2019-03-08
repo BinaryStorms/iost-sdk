@@ -17,7 +17,7 @@ module IOSTSdk
       end
 
       def raw_data_bytes
-        [contract, action_name, JSON.generate(data)]
+        [contract, action_name, data.to_s]
       end
     end
   end

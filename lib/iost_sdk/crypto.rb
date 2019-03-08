@@ -91,6 +91,11 @@ module IOSTSdk
         @private_key = private_key
       end
 
+      def value
+        Base58.binary_to_base58(@private_key.keypair, :bitcoin) if
+          @algo == IOSTSdk::Crypto.key_algos[:Ed25519]
+      end
+
       def public_key
         Base58.binary_to_base58(public_key_raw, :bitcoin)
       end

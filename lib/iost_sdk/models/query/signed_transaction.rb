@@ -31,8 +31,8 @@ module IOSTSdk
         end
 
         def sign(account_name:, key_pair:)
-          add_sig(key_pair: key_pair)
           add_publisher_sig(account_name: account_name, key_pair: key_pair)
+          self
         end
 
         private
@@ -43,11 +43,10 @@ module IOSTSdk
             serializer.int64_to_bytes(expiration) +
             serializer.int64_to_bytes(gas_ratio * 100) +
             serializer.int64_to_bytes(gas_limit * 100) +
-            serializer.int32_to_bytes(chain_id) +
             serializer.int64_to_bytes(delay) +
-            # adding "reserved" as a fixed value
-            serializer.int32_to_bytes(0) +
-            serializer.array_to_bytes(signers) +
+            serializer.int32_to_bytes(chain_id)
+          tx_bytes += serializer.int32_to_bytes(0) unless reserved
+          tx_bytes += serializer.array_to_bytes(signers) +
             serializer.array_to_bytes(actions) +
             serializer.array_to_bytes(amount_limit)
 
@@ -60,7 +59,9 @@ module IOSTSdk
             serializer = IOSTSdk::Models::Util::Serializer
             byte_string = byte_string +
               serializer.int32_to_bytes(signatures.size) +
-              signatures.map(&:bytes).flatten
+              signatures.map { |sig| serializer.int32_to_bytes(sig.bytes.size) + sig.bytes }.flatten
+
+            byte_string
           end
 
           SHA3::Digest.new(:sha256)
@@ -68,8 +69,12 @@ module IOSTSdk
                       .digest
         end
 
+        def gen_sig(key_pair:)
+          key_pair.sign(message: hash_value(include_signatures: true))
+        end
+
         def add_sig(key_pair:)
-          signature = key_pair.sign(message: hash_value(include_signatures: false))
+          signature = gen_sig(key_pair: key_pair)
           @signatures ||= []
           @signatures << IOSTSdk::Models::Signature.new.populate(
             model_data: {
@@ -83,7 +88,7 @@ module IOSTSdk
         end
 
         def add_publisher_sig(account_name:, key_pair:)
-          signature = key_pair.sign(message: hash_value(include_signatures: true))
+          signature = gen_sig(key_pair: key_pair)
           # set "publisher"
           instance_variable_set('@publisher', account_name)
           self.class.send(:define_method, :publisher) { instance_variable_get('@publisher') }

@@ -6,15 +6,15 @@ require 'iost_sdk/crypto'
 
 RSpec.describe IOSTSdk do
   it 'should create an instance with default values' do
-    iost = IOSTSdk::Main.new(endpoint: 'http://13.52.105.102:30001')
-    expect(iost.gas_limit).to eq(1_000_000)
+    iost = IOSTSdk::Main.new(endpoint: testnet_url)
+    expect(iost.gas_limit).to eq(2_000_000)
     expect(iost.gas_ratio).to eq(1)
     expect(iost.delay).to eq(0)
-    expect(iost.expiration).to eq(90_000_000_000)
+    expect(iost.expiration).to eq(90)
   end
 
   it 'should create a Transaction with an action' do
-    txn = IOSTSdk::Main.new(endpoint: 'http://13.52.105.102:30001')
+    txn = IOSTSdk::Main.new(endpoint: testnet_url)
                        .call_abi(
                          contract_id: 'contract-123',
                          abi_name: 'grow',
@@ -40,7 +40,7 @@ RSpec.describe IOSTSdk do
   end
 
   it 'should create a Transaction with a transfer action' do
-    txn = IOSTSdk::Main.new(endpoint: 'http://13.52.105.102:30001')
+    txn = IOSTSdk::Main.new(endpoint: testnet_url)
                        .transfer(
                          token: 'iron.man',
                          from: 'Tony',
@@ -77,12 +77,12 @@ RSpec.describe IOSTSdk do
       initial_gas_pledge: 10_000
     }
 
-    txn = IOSTSdk::Main.new(endpoint: 'http://13.52.105.102:30001')
+    txn = IOSTSdk::Main.new(endpoint: testnet_url)
                        .new_account(new_account_args)
     expect(txn.is_a?(IOSTSdk::Models::Query::Transaction)).to be_truthy
     expect(txn.actions.size).to eq(3)
 
-    expect(txn.expiration).to eq(txn.time + 90_000_000_000 * 1_000_000)
+    expect(txn.expiration).to eq(txn.time + 90 * 1_000_000_000)
     expect(txn.amount_limit.size).to eq(1)
     expect(txn.amount_limit.first.token).to eq('*')
     expect(txn.amount_limit.first.value).to eq('unlimited')

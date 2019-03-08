@@ -9,8 +9,7 @@ require 'iost_sdk/models/query/contract_storage_fields'
 require 'iost_sdk/models/query/signed_transaction'
 
 RSpec.describe IOSTSdk::Http::Client do
-  let(:base_url) { 'http://13.52.105.102:30001' }
-  let(:client) { IOSTSdk::Http::Client.new(base_url: base_url) }
+  let(:client) { IOSTSdk::Http::Client.new(base_url: testnet_url) }
 
   describe 'all API call methods' do
     before(:all) {
@@ -122,24 +121,24 @@ RSpec.describe IOSTSdk::Http::Client do
   describe 'transactions' do
     let(:key_pair) do
       IOSTSdk::Crypto.from_keypair(
-        encoded_keypair: '2yquS3ySrGWPEKywCPzX4RTJugqRh7kJSo5aehsLYPEWkUxBWA39oMrZ7ZxuM4fgyXYs2cPwh5n8aNNpH5x2VyK1'
+        encoded_keypair: '3uwDfYMnqh2WyNUiU6WWFUTYuVEXGtQeECzMq9Q9pigmtUBZK1s4WBw7JGWukgCUysayMUF6irvc47WHEQLiWixL'
       )
     end
 
     it 'should send a "new account" transaction correctly' do
-      txn = IOSTSdk::Main.new(endpoint: 'http://13.52.105.102:30001')
+      txn = IOSTSdk::Main.new(endpoint: testnet_url)
                          .new_account(
                            name: 'ironman',
-                           creator: 'admin',
+                           creator: 'binary_test',
                            owner_key: key_pair,
                            active_key: key_pair,
-                           initial_ram: 1_024,
-                           initial_gas_pledge: 10
+                           initial_ram: 10,
+                           initial_gas_pledge: 0
                          )
-      txn.chain_id = 1024
-      # TODO: need an autorized user with enough gas ...
-      resp = client.send_tx(transaction: txn, account_name: 'admin', key_pair: key_pair)
-      puts "------ new account txn response: #{resp}"
+      txn.chain_id = 1023
+      resp = client.send_tx(transaction: txn, account_name: 'binary_test', key_pair: key_pair)
+      expect(resp).to_not be_nil
+      expect(resp['hash']).to_not be_nil
     end
   end
 end

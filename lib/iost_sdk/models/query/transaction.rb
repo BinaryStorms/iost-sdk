@@ -12,7 +12,7 @@ module IOSTSdk
       class Transaction
         include Models
 
-        attr_accessor :chain_id
+        attr_accessor :chain_id, :time, :expiration
 
         def self.attr_names
           [
@@ -22,6 +22,7 @@ module IOSTSdk
             'gas_limit',
             'delay',
             'chain_id',
+            'reserved',
             'signers',
             'actions',
             'amount_limit',
@@ -34,10 +35,10 @@ module IOSTSdk
         # @param expiration [Integer] number of seconds, since creation, the transaction will expire in
         # @param delay [Integer] the delay
         def set_time_params(expiration:, delay:)
-          time_now = Time.now.utc.to_i * 1_000_000
+          time_now = (Time.now.utc.to_f * 1000).to_i * 1_000_000
 
           @time = time_now
-          @expiration = @time + expiration * 1_000_000
+          @expiration = @time + expiration * 1_000_000_000
           @delay = delay
         end
 

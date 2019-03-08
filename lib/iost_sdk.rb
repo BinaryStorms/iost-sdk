@@ -10,10 +10,10 @@ module IOSTSdk
     attr_accessor :gas_limit, :gas_ratio, :delay, :expiration, :approval_limit_amount
 
     DEFAULTS = {
-      gas_limit: 1_000_000,
+      gas_limit: 2_000_000,
       gas_ratio: 1,
       delay: 0,
-      expiration: 90_000_000_000,
+      expiration: 90,
       approval_limit_amount: :unlimited
     }.freeze
 
@@ -68,21 +68,30 @@ module IOSTSdk
     # @param initial_gas_pledge [Integer] the initial gas pledge of the new account
     def new_account(name:, creator:, owner_key:, active_key:, initial_ram:, initial_gas_pledge:)
       transaction = init_transaction
+      transaction.add_action(
+        contract_id: 'auth.iost',
+        action_name: :signUp,
+        action_data: [name, owner_key.id, active_key.id]
+      )
 
-      [
-        {
-          contract_id: 'auth.iost', action_name: :signUp, action_data: [name, owner_key.id, active_key.id]
-        },
-        {
-          contract_id: 'ram.iost', action_name: :buy, action_data: [creator, name, initial_ram]
-        },
-        {
-          contract_id: 'ram.iost', action_name: :buy, action_data: [creator, name, initial_gas_pledge.to_s]
-        }
-      ].each { |args| transaction.add_action(args) }
+      if initial_ram > 10
+        transaction.add_action(
+          contract_id: 'ram.iost',
+          action_name: :buy,
+          action_data: [creator, name, initial_ram]
+        )
+      end
 
-      transaction.set_time_params(expiration: @expiration, delay: delay)
-      transaction.add_approve(token: '*', amount: @approval_limit_amount)
+      if initial_gas_pledge > 0
+        transaction.add_action(
+          contract_id: 'ram.iost',
+          action_name: :buy,
+          action_data: [creator, name, initial_gas_pledge.to_s]
+        )
+      end
+
+      transaction.set_time_params(expiration: expiration, delay: delay)
+      transaction.add_approve(token: '*', amount: approval_limit_amount)
       transaction
     end
 
