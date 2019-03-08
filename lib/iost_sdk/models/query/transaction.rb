@@ -12,7 +12,7 @@ module IOSTSdk
       class Transaction
         include Models
 
-        attr_accessor :chain_id, :time, :expiration
+        attr_accessor :chain_id
 
         def self.attr_names
           [

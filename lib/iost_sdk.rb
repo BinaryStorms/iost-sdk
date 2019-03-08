@@ -37,6 +37,7 @@ module IOSTSdk
       transaction = init_transaction
       transaction.add_action(contract_id: contract_id, action_name: abi_name, action_data: abi_args)
       transaction.add_approve(token: '*', amount: :unlimited)
+      transaction.set_time_params(expiration: expiration, delay: delay)
       transaction
     end
 
@@ -55,6 +56,7 @@ module IOSTSdk
         abi_args: [token, from, to, amount, memo]
       )
       transaction.add_approve(token: :iost, amount: amount)
+      transaction.set_time_params(expiration: expiration, delay: delay)
       transaction
     end
 

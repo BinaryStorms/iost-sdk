@@ -140,5 +140,33 @@ RSpec.describe IOSTSdk::Http::Client do
       expect(resp).to_not be_nil
       expect(resp['hash']).to_not be_nil
     end
+
+    it 'should send a "callABI" transaction correctly' do
+      txn = IOSTSdk::Main.new(endpoint: testnet_url)
+                         .call_abi(
+                           contract_id: 'token.iost',
+                           abi_name: 'transfer',
+                           abi_args: ['iost', 'binary_test', 'binary_test', '10.000', '']
+                         )
+      txn.chain_id = 1023
+      resp = client.send_tx(transaction: txn, account_name: 'binary_test', key_pair: key_pair)
+      expect(resp).to_not be_nil
+      expect(resp['hash']).to_not be_nil
+    end
+
+    it 'should send a "transfer" transaction correctly' do
+      txn = IOSTSdk::Main.new(endpoint: testnet_url)
+                         .transfer(
+                           token: 'iost',
+                           from: 'binary_test',
+                           to: 'binary_test',
+                           amount: '10.000',
+                           memo: 'this is a test'
+                         )
+      txn.chain_id = 1023
+      resp = client.send_tx(transaction: txn, account_name: 'binary_test', key_pair: key_pair)
+      expect(resp).to_not be_nil
+      expect(resp['hash']).to_not be_nil
+    end
   end
 end
