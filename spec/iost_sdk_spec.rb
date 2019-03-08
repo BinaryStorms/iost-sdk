@@ -23,6 +23,7 @@ RSpec.describe IOSTSdk do
                            cap: 999
                          }
                        )
+                       .transaction
 
     expect(txn.is_a?(IOSTSdk::Models::Query::Transaction)).to be_truthy
     expect(txn.actions.size).to eq(1)
@@ -48,6 +49,7 @@ RSpec.describe IOSTSdk do
                          amount: 999,
                          memo: 'Hey, spend it well :-)'
                        )
+                       .transaction
     expect(txn.is_a?(IOSTSdk::Models::Query::Transaction)).to be_truthy
     expect(txn.actions.size).to eq(1)
     expect(txn.actions.first.contract).to eq('token.iost')
@@ -79,6 +81,7 @@ RSpec.describe IOSTSdk do
 
     txn = IOSTSdk::Main.new(endpoint: testnet_url)
                        .new_account(new_account_args)
+                       .transaction
     expect(txn.is_a?(IOSTSdk::Models::Query::Transaction)).to be_truthy
     expect(txn.actions.size).to eq(3)
 
@@ -86,5 +89,57 @@ RSpec.describe IOSTSdk do
     expect(txn.amount_limit.size).to eq(1)
     expect(txn.amount_limit.first.token).to eq('*')
     expect(txn.amount_limit.first.value).to eq('unlimited')
+  end
+
+  describe 'transactions' do
+    let(:key_pair) do
+      IOSTSdk::Crypto.from_keypair(
+        encoded_keypair: '3uwDfYMnqh2WyNUiU6WWFUTYuVEXGtQeECzMq9Q9pigmtUBZK1s4WBw7JGWukgCUysayMUF6irvc47WHEQLiWixL'
+      )
+    end
+
+    it 'should send a "new account" transaction correctly' do
+      iost = IOSTSdk::Main.new(endpoint: testnet_url)
+                         .new_account(
+                           name: 'ironman',
+                           creator: 'binary_test',
+                           owner_key: key_pair,
+                           active_key: key_pair,
+                           initial_ram: 10,
+                           initial_gas_pledge: 0
+                         )
+      iost.transaction.chain_id = 1023
+      resp = iost.send(account_name: 'binary_test', key_pair: key_pair)
+      expect(resp).to_not be_nil
+      expect(resp['hash']).to_not be_nil
+    end
+
+    it 'should send a "callABI" transaction correctly' do
+      iost = IOSTSdk::Main.new(endpoint: testnet_url)
+                          .call_abi(
+                            contract_id: 'token.iost',
+                            abi_name: 'transfer',
+                            abi_args: ['iost', 'binary_test', 'binary_test', '10.000', '']
+                          )
+      iost.transaction.chain_id = 1023
+      resp = iost.send(account_name: 'binary_test', key_pair: key_pair)
+      expect(resp).to_not be_nil
+      expect(resp['hash']).to_not be_nil
+    end
+
+    it 'should send a "transfer" transaction correctly' do
+      iost = IOSTSdk::Main.new(endpoint: testnet_url)
+                          .transfer(
+                            token: 'iost',
+                            from: 'binary_test',
+                            to: 'binary_test',
+                            amount: '10.000',
+                            memo: 'this is a test'
+                          )
+      iost.transaction.chain_id = 1023
+      resp = iost.send(account_name: 'binary_test', key_pair: key_pair)
+      expect(resp).to_not be_nil
+      expect(resp['hash']).to_not be_nil
+    end
   end
 end

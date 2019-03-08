@@ -7,7 +7,9 @@ require 'iost_sdk/models/query/signed_transaction'
 
 module IOSTSdk
   class Main
-    attr_accessor :gas_limit, :gas_ratio, :delay, :expiration, :approval_limit_amount
+    attr_accessor :gas_limit, :gas_ratio, :delay,
+                  :expiration, :approval_limit_amount,
+                  :transaction
 
     DEFAULTS = {
       gas_limit: 2_000_000,
@@ -27,6 +29,17 @@ module IOSTSdk
       end
     end
 
+    def send(account_name:, key_pair:)
+      if @transaction
+        client = IOSTSdk::Http::Client.new(base_url: @endpoint)
+        client.send_tx(
+          transaction: @transaction,
+          account_name: account_name,
+          key_pair: key_pair
+        )
+      end
+    end
+
     # Create an instance of IOSTSdk::Models::Transaction with an action to call the ABI.
     #
     # @param contract_id [String] a Contract's ID
@@ -38,7 +51,9 @@ module IOSTSdk
       transaction.add_action(contract_id: contract_id, action_name: abi_name, action_data: abi_args)
       transaction.add_approve(token: '*', amount: :unlimited)
       transaction.set_time_params(expiration: expiration, delay: delay)
-      transaction
+
+      @transaction = transaction
+      self
     end
 
     # Create an instance IOSTSdk::Models::Transaction with an action to transfer tokens
@@ -50,14 +65,15 @@ module IOSTSdk
     # @param memo [String] memo/notes for the transfer
     # @return a new instance of Transaction
     def transfer(token:, from:, to:, amount:, memo:)
-      transaction = call_abi(
+      call_abi(
         contract_id: 'token.iost',
         abi_name: :transfer,
         abi_args: [token, from, to, amount, memo]
       )
-      transaction.add_approve(token: :iost, amount: amount)
-      transaction.set_time_params(expiration: expiration, delay: delay)
-      transaction
+      @transaction.add_approve(token: :iost, amount: amount)
+      @transaction.set_time_params(expiration: expiration, delay: delay)
+
+      self
     end
 
     # Create an instance IOSTSdk::Models::Transaction to create a new account
@@ -94,7 +110,9 @@ module IOSTSdk
 
       transaction.set_time_params(expiration: expiration, delay: delay)
       transaction.add_approve(token: '*', amount: approval_limit_amount)
-      transaction
+
+      @transaction = transaction
+      self
     end
 
     private
