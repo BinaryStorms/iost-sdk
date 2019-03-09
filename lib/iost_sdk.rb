@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 require 'iost_sdk/version'
+require 'iost_sdk/crypto'
+require 'iost_sdk/errors'
 require 'iost_sdk/http/client'
 require 'iost_sdk/models/query/transaction'
 require 'iost_sdk/models/query/signed_transaction'
