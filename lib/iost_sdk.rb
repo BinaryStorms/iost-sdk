@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'forwardable'
 require 'iost_sdk/version'
 require 'iost_sdk/crypto'
 require 'iost_sdk/errors'
@@ -9,6 +10,9 @@ require 'iost_sdk/models/query/signed_transaction'
 
 module IOSTSdk
   class Main
+    extend Forwardable
+
+    attr_reader :client
     attr_accessor :gas_limit, :gas_ratio, :delay,
                   :expiration, :approval_limit_amount,
                   :transaction
@@ -25,16 +29,18 @@ module IOSTSdk
     # @param endpoint [String] a URL of the JSON RPC endpoint of IOST
     def initialize(endpoint:)
       @endpoint = endpoint
+      @client = IOSTSdk::Http::Client.new(base_url: @endpoint)
 
       DEFAULTS.each do |k, v|
         instance_variable_set("@#{k}".to_sym, v)
       end
     end
 
-    def send(account_name:, key_pair:)
+    def_delegators :@client, *IOSTSdk::Http::Client.read_apis.keys
+
+    def sign_and_send(account_name:, key_pair:)
       if @transaction
-        client = IOSTSdk::Http::Client.new(base_url: @endpoint)
-        client.send_tx(
+        @client.send_tx(
           transaction: @transaction,
           account_name: account_name,
           key_pair: key_pair
