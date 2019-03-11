@@ -11,7 +11,7 @@ module IOSTSdk
     class Client
       # key: method name
       # value: an array of args
-      METHODS = {
+      READ_METHODS = {
         get_node_info: [],
         get_chain_info: [],
         get_gas_ratio: [],
@@ -24,11 +24,21 @@ module IOSTSdk
         get_token_balance: [:account_name, :token_name, :by_longest_chain],
         get_contract: [:id, :by_longest_chain],
         get_contract_storage: [:query],
-        get_contract_storage_fields: [:query],
+        get_contract_storage_fields: [:query]
+      }.freeze
+
+      WRITE_METHODS = {
         send_tx: [:transaction, :account_name, :key_pair]
         # TODO: exec_tx
         # TODO: subscribe
-      }
+      }.freeze
+
+      METHODS = READ_METHODS.merge(WRITE_METHODS)
+                            .freeze
+
+      def self.read_apis
+        READ_METHODS
+      end
 
       def initialize(base_url:)
         @base_url = base_url
