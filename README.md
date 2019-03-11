@@ -15,6 +15,8 @@ This is a Ruby SDK for interacting with the [IOST blockchain](https://iost.io/).
 These method calls, arguments, and return object should match the [official IOST API](https://developers.iost.io/docs/en/6-reference/API.html)
 
 ```ruby
+require 'iost_sdk'
+
 # set the JSON RPC endpoint base URL
 base_url = 'https://127.0.0.1:30001'
 iost = IOSTSdk::Main.new(endpoint: base_url)
