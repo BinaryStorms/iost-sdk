@@ -219,8 +219,8 @@ RSpec.describe IOSTSdk do
                          )
       iost.transaction.chain_id = 1023
       resp = iost.sign_and_send(account_name: 'binary_test', key_pair: key_pair)
-      expect(resp).to_not be_nil
-      expect(resp['hash']).to_not be_nil
+      expect(resp[:status]).to eq('failed')
+      expect(resp[:txn_hash]).to_not be_nil
     end
 
     it 'should send a "callABI" transaction correctly' do
@@ -232,8 +232,8 @@ RSpec.describe IOSTSdk do
                           )
       iost.transaction.chain_id = 1023
       resp = iost.sign_and_send(account_name: 'binary_test', key_pair: key_pair)
-      expect(resp).to_not be_nil
-      expect(resp['hash']).to_not be_nil
+      expect(resp[:status]).to eq('success')
+      expect(resp[:txn_hash]).to_not be_nil
     end
 
     it 'should send a "transfer" transaction correctly' do
@@ -247,8 +247,8 @@ RSpec.describe IOSTSdk do
                           )
       iost.transaction.chain_id = 1023
       resp = iost.sign_and_send(account_name: 'binary_test', key_pair: key_pair)
-      expect(resp).to_not be_nil
-      expect(resp['hash']).to_not be_nil
+      expect(resp[:status]).to eq('success')
+      expect(resp[:txn_hash]).to_not be_nil
     end
   end
 end

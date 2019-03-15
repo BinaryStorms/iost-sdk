@@ -11,7 +11,8 @@ module IOSTSdk
       def self.attr_names
         [
           'status',
-          'transaction'
+          'transaction',
+          'block_number'
         ]
       end
     end
