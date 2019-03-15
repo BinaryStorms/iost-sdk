@@ -63,7 +63,7 @@ RSpec.describe IOSTSdk::Http::Client do
       expect(tx_info.is_a?(IOSTSdk::Models::TransactionInfo)).to be_truthy
     end
 
-    it '/getTxReceiptByHash should succeed' do
+    it '/getTxReceiptByTxHash should succeed' do
       tx_receipt = client.get_tx_receipt_by_tx_hash(hash_value: @test_data[:transactions].first.hash)
       expect(tx_receipt).not_to be_nil
       expect(tx_receipt.is_a?(IOSTSdk::Models::TxReceipt)).to be_truthy

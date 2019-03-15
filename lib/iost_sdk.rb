@@ -25,6 +25,13 @@ module IOSTSdk
       approval_limit_amount: :unlimited
     }.freeze
 
+    TXN_POLL_CAP = 90
+    TXN_STATUS = {
+      pending: 'pending',
+      success: 'success',
+      failed: 'failed'
+    }.freeze
+
     #
     # @param endpoint [String] a URL of the JSON RPC endpoint of IOST
     def initialize(endpoint:)
@@ -40,11 +47,38 @@ module IOSTSdk
 
     def sign_and_send(account_name:, key_pair:)
       if @transaction
-        @client.send_tx(
+        resp = @client.send_tx(
           transaction: @transaction,
           account_name: account_name,
           key_pair: key_pair
         )
+
+        if resp['pre_tx_receipt']['status_code'] != TXN_STATUS[:success].upcase
+          {
+            status: TXN_STATUS[:failed],
+            txn_hash: resp['hash']
+          }
+        else
+          txn_hash = resp['hash']
+          num_tries = 0
+          txn_status = TXN_STATUS[:pending]
+          txn_receipt = nil
+          # poll transaction receipt by hash
+          while ![TXN_STATUS[:success], TXN_STATUS[:failed]].include?(txn_status) && num_tries <= TXN_POLL_CAP do
+            begin
+              txn_receipt = @client.get_tx_receipt_by_tx_hash(hash_value: txn_hash)
+            rescue
+            end
+            txn_status = txn_receipt.status_code.downcase if txn_receipt && txn_receipt.status_code
+            num_tries += 1
+            sleep(1)
+          end
+
+          {
+            status: txn_status,
+            txn_hash: txn_receipt.tx_hash
+          }
+        end
       end
     end
 
