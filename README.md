@@ -82,6 +82,9 @@ contract_storage_fields = iost.get_contract_storage_fields(query: query)
 
 ### Create, sign and send transactions
 
+The method `sign_and_send` returns AFTER the transaction has become irreversible. It has a
+maximum timeout of 90 seconds.
+
 ```ruby
 require 'iost_sdk'
 
@@ -114,4 +117,8 @@ resp = iost.call_abi(
              abi_args: ['iost', 'rich', 'poor', '10.000', 'hey hey']
            )
            .sign_and_send(account_name: 'rich', key_pair: key_pair)
+
+# resp is a hash with keys :status and :txn_hash
+status = resp[:status] # status can be `pending`, `success` or `failed`
+txn_hash = resp[:txn_hash]
 ```
