@@ -13,7 +13,9 @@ module IOSTSdk
           'build_time',
           'git_hash',
           'mode',
-          'network'
+          'network',
+          'code_version',
+          'server_time'
         ]
       end
     end
