@@ -1,3 +1,3 @@
 module IOSTSdk
-  VERSION = ENV['IOST_SDK_VERSION'] || '0.1.0'
+  VERSION = ENV['IOST_SDK_VERSION'] || '0.1.4'
 end

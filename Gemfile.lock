@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    iost_sdk (0.1.0)
+    iost_sdk (0.1.4)
       base58 (~> 0.2.3)
       btcruby (~> 1.8)
       ed25519 (~> 1.2.4)
@@ -31,7 +31,7 @@ GEM
     json (2.1.0)
     mime-types (3.2.2)
       mime-types-data (~> 3.2015)
-    mime-types-data (3.2018.0812)
+    mime-types-data (3.2019.0331)
     multi_xml (0.6.0)
     rake (10.5.0)
     rspec (3.8.0)
