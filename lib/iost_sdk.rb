@@ -46,7 +46,7 @@ module IOSTSdk
     def_delegators :@client, *IOSTSdk::Http::Client.read_apis.keys
 
     def sign_and_send(account_name:, key_pair:)
-      if @transaction
+      if @transaction && @transaction.is_valid?
         resp = @client.send_tx(
           transaction: @transaction,
           account_name: account_name,
@@ -91,7 +91,6 @@ module IOSTSdk
     def call_abi(contract_id:, abi_name:, abi_args:)
       transaction = init_transaction
       transaction.add_action(contract_id: contract_id, action_name: abi_name, action_data: abi_args)
-      transaction.add_approve(token: '*', amount: :unlimited)
       transaction.set_time_params(expiration: expiration, delay: delay)
 
       @transaction = transaction
@@ -110,7 +109,7 @@ module IOSTSdk
       call_abi(
         contract_id: 'token.iost',
         abi_name: :transfer,
-        abi_args: [token, from, to, amount, memo]
+        abi_args: [token, from, to, amount.to_s, memo]
       )
       @transaction.add_approve(token: :iost, amount: amount)
       @transaction.set_time_params(expiration: expiration, delay: delay)
@@ -151,8 +150,6 @@ module IOSTSdk
       end
 
       transaction.set_time_params(expiration: expiration, delay: delay)
-      transaction.add_approve(token: '*', amount: approval_limit_amount)
-
       @transaction = transaction
       self
     end

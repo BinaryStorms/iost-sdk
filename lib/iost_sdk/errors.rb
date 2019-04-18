@@ -6,5 +6,11 @@ module IOSTSdk
         super(@message)
       end
     end
+
+    class InvalidTransactionError < StandardError
+      def initialize(message)
+        super(message)
+      end
+    end
   end
 end

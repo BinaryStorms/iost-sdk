@@ -35,9 +35,6 @@ RSpec.describe IOSTSdk do
         cap: 999
       )
     )
-    expect(txn.amount_limit.size).to eq(1)
-    expect(txn.amount_limit.first.token).to eq('*')
-    expect(txn.amount_limit.first.value).to eq('unlimited')
   end
 
   it 'should create a Transaction with a transfer action' do
@@ -55,13 +52,11 @@ RSpec.describe IOSTSdk do
     expect(txn.actions.first.contract).to eq('token.iost')
     expect(txn.actions.first.action_name).to eq('transfer')
     expect(txn.actions.first.data).to eq(
-      JSON.generate(['iron.man', 'Tony', 'Stark', 999, 'Hey, spend it well :-)'])
+      JSON.generate(['iron.man', 'Tony', 'Stark', '999', 'Hey, spend it well :-)'])
     )
-    expect(txn.amount_limit.size).to eq(2)
-    expect(txn.amount_limit.first.token).to eq('*')
-    expect(txn.amount_limit.first.value).to eq('unlimited')
-    expect(txn.amount_limit[1].token).to eq('iost')
-    expect(txn.amount_limit[1].value).to eq('999')
+    expect(txn.amount_limit.size).to eq(1)
+    expect(txn.amount_limit.first.token).to eq('iost')
+    expect(txn.amount_limit.first.value).to eq('999')
   end
 
   it 'should create a Transaction with a new_account action' do
@@ -84,11 +79,7 @@ RSpec.describe IOSTSdk do
                        .transaction
     expect(txn.is_a?(IOSTSdk::Models::Query::Transaction)).to be_truthy
     expect(txn.actions.size).to eq(3)
-
     expect(txn.expiration).to eq(txn.time + 90 * 1_000_000_000)
-    expect(txn.amount_limit.size).to eq(1)
-    expect(txn.amount_limit.first.token).to eq('*')
-    expect(txn.amount_limit.first.value).to eq('unlimited')
   end
 
   describe 'read APIs' do
@@ -242,7 +233,7 @@ RSpec.describe IOSTSdk do
                             token: 'iost',
                             from: 'binary_test',
                             to: 'binary_test',
-                            amount: '10.000',
+                            amount: 10.0,
                             memo: 'this is a test'
                           )
       iost.transaction.chain_id = 1023

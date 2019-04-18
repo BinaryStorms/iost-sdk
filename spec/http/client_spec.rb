@@ -162,7 +162,7 @@ RSpec.describe IOSTSdk::Http::Client do
                            token: 'iost',
                            from: 'binary_test',
                            to: 'binary_test',
-                           amount: '10.000',
+                           amount: 10.0,
                            memo: 'this is a test'
                          )
                          .transaction
