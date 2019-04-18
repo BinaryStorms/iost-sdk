@@ -106,7 +106,7 @@ resp = iost.transfer(
              token: 'iost',
              from: 'rich',
              to: 'poor',
-             amount: '10.000',
+             amount: 10.0,
              memo: 'free tokens!'
            )
            .sign_and_send(account_name: 'rich', key_pair: key_pair)

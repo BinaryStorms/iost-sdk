@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'json'
+require 'iost_sdk/errors'
 require 'iost_sdk/models'
 require 'iost_sdk/models/amount_limit'
 require 'iost_sdk/models/action'
@@ -11,6 +12,10 @@ module IOSTSdk
     module Query
       class Transaction
         include Models
+
+        GAS_LIMIT_RANGE = [6000, 4_000_000].freeze
+        GAS_RATIO_RANGE = [1, 100].freeze
+        NUMERIC_REGEX = /^\d+(\.\d+)?$/.freeze
 
         attr_accessor :chain_id
 
@@ -62,12 +67,27 @@ module IOSTSdk
         # @param token [String] name of the token
         # @param amount [Integer|String] amount of the token or 'unlimited'
         def add_approve(token:, amount:)
+          raise IOSTSdk::Errors::InvalidTransactionError.new('approve token should not be *') if token == '*'
+          raise IOSTSdk::Errors::InvalidTransactionError.new('approve amount should be numeric') unless amount.is_a?(Numeric)
+
           @amount_limit << IOSTSdk::Models::AmountLimit.new.populate(
             model_data: {
               'token' => token.to_s,
               'value' => amount.to_s
             }
           )
+        end
+
+        # Verify if the transaction object is valid
+        def is_valid?
+          [
+            # check gas limit
+            gas_limit.is_a?(Numeric) && gas_limit.between?(GAS_LIMIT_RANGE.first, GAS_LIMIT_RANGE.last),
+            # check gas ratio
+            gas_ratio.is_a?(Numeric) && gas_ratio.between?(GAS_RATIO_RANGE.first, GAS_RATIO_RANGE.last),
+            # check approve token and amount
+            amount_limit.all? { |al| al.token != '*' || /^\d+(\.\d+)?$/ =~ al.value }
+          ].all?
         end
       end
     end
