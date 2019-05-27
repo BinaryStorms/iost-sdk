@@ -39,10 +39,11 @@ module IOSTSdk
         #
         # @param expiration [Integer] number of seconds, since creation, the transaction will expire in
         # @param delay [Integer] the delay
-        def set_time_params(expiration:, delay:)
+        # @param server_time_diff [Integer] diff between client time and IOST node server time
+        def set_time_params(expiration:, delay:, server_time_diff:)
           time_now = (Time.now.utc.to_f * 1000).to_i * 1_000_000
 
-          @time = time_now
+          @time = time_now + (server_time_diff || 0)
           @expiration = @time + expiration * 1_000_000_000
           @delay = delay
         end
@@ -67,7 +68,6 @@ module IOSTSdk
         # @param token [String] name of the token
         # @param amount [Integer|String] amount of the token or 'unlimited'
         def add_approve(token:, amount:)
-          raise IOSTSdk::Errors::InvalidTransactionError.new('approve token should not be *') if token == '*'
           raise IOSTSdk::Errors::InvalidTransactionError.new('approve amount should be numeric') unless amount.is_a?(Numeric)
 
           @amount_limit << IOSTSdk::Models::AmountLimit.new.populate(

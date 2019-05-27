@@ -219,9 +219,10 @@ RSpec.describe IOSTSdk do
                           .call_abi(
                             contract_id: 'token.iost',
                             abi_name: 'transfer',
-                            abi_args: ['iost', 'binary_test', 'binary_test', '10.000', '']
+                            abi_args: ['iost', 'binary_test', 'binary_test', '1.0', '']
                           )
       iost.transaction.chain_id = 1023
+      iost.transaction.add_approve(token: 'iost', amount: 1.0)
       resp = iost.sign_and_send(account_name: 'binary_test', key_pair: key_pair)
       expect(resp[:status]).to eq('success')
       expect(resp[:txn_hash]).to_not be_nil
