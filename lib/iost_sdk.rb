@@ -32,6 +32,8 @@ module IOSTSdk
       failed: 'failed'
     }.freeze
 
+    SERVER_TIME_DIFF_THRESHOLD = (30 * 1_000_000_000).freeze
+
     #
     # @param endpoint [String] a URL of the JSON RPC endpoint of IOST
     def initialize(endpoint:)
@@ -53,10 +55,11 @@ module IOSTSdk
           key_pair: key_pair
         )
 
-        if resp['pre_tx_receipt']['status_code'] != TXN_STATUS[:success].upcase
+        if !resp['pre_tx_receipt'] || (resp['pre_tx_receipt'] && resp['pre_tx_receipt']['status_code'] != TXN_STATUS[:success].upcase)
           {
             status: TXN_STATUS[:failed],
-            txn_hash: resp['hash']
+            txn_hash: resp['hash'],
+            message: resp['pre_tx_receipt'] ? resp['pre_tx_receipt']['error'] : ''
           }
         else
           txn_hash = resp['hash']
@@ -76,7 +79,8 @@ module IOSTSdk
 
           {
             status: txn_status,
-            txn_hash: txn_receipt.tx_hash
+            txn_hash: txn_receipt.tx_hash,
+            message: ''
           }
         end
       end
@@ -91,8 +95,11 @@ module IOSTSdk
     def call_abi(contract_id:, abi_name:, abi_args:)
       transaction = init_transaction
       transaction.add_action(contract_id: contract_id, action_name: abi_name, action_data: abi_args)
-      transaction.set_time_params(expiration: expiration, delay: delay)
-
+      transaction.set_time_params(
+        expiration: expiration,
+        delay: delay,
+        server_time_diff: server_time_diff
+      )
       @transaction = transaction
       self
     end
@@ -112,7 +119,6 @@ module IOSTSdk
         abi_args: [token, from, to, amount.to_s, memo]
       )
       @transaction.add_approve(token: :iost, amount: amount)
-      @transaction.set_time_params(expiration: expiration, delay: delay)
 
       self
     end
@@ -148,9 +154,14 @@ module IOSTSdk
           action_data: [creator, name, initial_gas_pledge.to_s]
         )
       end
+      transaction.set_time_params(
+        expiration: expiration,
+        delay: delay,
+        server_time_diff: server_time_diff
+      )
 
-      transaction.set_time_params(expiration: expiration, delay: delay)
       @transaction = transaction
+
       self
     end
 
@@ -173,6 +184,18 @@ module IOSTSdk
         }
       )
       transaction
+    end
+
+    def server_time_diff
+      request_start_time = Time.now.utc.to_i * 1_000_000_000
+      node_server_time = @client.get_node_info.server_time.to_i
+      request_end_time = Time.now.utc.to_i * 1_000_000_000
+
+      if request_end_time - request_start_time < SERVER_TIME_DIFF_THRESHOLD
+        node_server_time - request_end_time
+      else
+        0
+      end
     end
   end
 end
