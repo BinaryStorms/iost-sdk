@@ -23,7 +23,7 @@ RSpec.describe IOSTSdk::Models::Query::Transaction do
 
   describe '.add_approve' do
     it 'should not raise an error if token is *' do
-      expect { txn.add_approve(token: '*', amount: 89.0) }.not_to raise_error(IOSTSdk::Errors::InvalidTransactionError)
+      expect { txn.add_approve(token: '*', amount: 89.0) }.not_to raise_error
     end
 
     it 'should raise an error if amount is not numeric' do

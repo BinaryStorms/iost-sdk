@@ -55,11 +55,11 @@ module IOSTSdk
           key_pair: key_pair
         )
 
-        if resp['pre_tx_receipt']['status_code'] != TXN_STATUS[:success].upcase
+        if !resp['pre_tx_receipt'] || (resp['pre_tx_receipt'] && resp['pre_tx_receipt']['status_code'] != TXN_STATUS[:success].upcase)
           {
             status: TXN_STATUS[:failed],
             txn_hash: resp['hash'],
-            message: resp['pre_tx_receipt']['error']
+            message: resp['pre_tx_receipt'] ? resp['pre_tx_receipt']['error'] : ''
           }
         else
           txn_hash = resp['hash']
