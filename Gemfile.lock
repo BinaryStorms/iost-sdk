@@ -33,7 +33,7 @@ GEM
       mime-types-data (~> 3.2015)
     mime-types-data (3.2019.0331)
     multi_xml (0.6.0)
-    rake (10.5.0)
+    rake (13.0.1)
     rspec (3.8.0)
       rspec-core (~> 3.8.0)
       rspec-expectations (~> 3.8.0)
@@ -66,7 +66,7 @@ DEPENDENCIES
   bundler (~> 1.16)
   coveralls (~> 0.8.22)
   iost_sdk!
-  rake (~> 10.0)
+  rake (~> 13.0)
   rspec (~> 3.0)
   yard (~> 0.9.16)
 
